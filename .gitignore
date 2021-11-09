@@ -7,3 +7,5 @@ composer.lock
 package-lock.json
 LICENSE.txt
 README.txt
+webpack.config.js
+postcss.config.js

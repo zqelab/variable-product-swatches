@@ -20,9 +20,19 @@ namespace Zqe;
  */
 class Woo_Variable_Product_Swatches_Option {
 
+	/**
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 * @var      \Zqe\Wp_Settings_Api    $core    Maintains and registers all hooks for the plugin.
+	 */
     public $core;
 
 
+	/**
+	 *
+	 * @since    1.0.0
+	 */
     public function __construct() {
         $this->core     = new \Zqe\Wp_Settings_Api();
         $this->core->set_name( 'testx' );
@@ -37,7 +47,6 @@ class Woo_Variable_Product_Swatches_Option {
     }
 
     public function get_pages() {
-
         return array(
             array(
                 'group' => 'basic_group',
@@ -67,7 +76,6 @@ class Woo_Variable_Product_Swatches_Option {
                                     'squared'           => 'Squared Shape'
                                 )
                             ),
-
                         )
                     ),
                     array(
@@ -262,8 +270,6 @@ class Woo_Variable_Product_Swatches_Option {
                                 'type'              => 'checkbox',
                                 'default'           => '',
                             ),
-
-
                             array(
                                 'id'                => 'label_separator',
                                 'title'             => __( 'Label Separator', 'wedevs' ),
