@@ -1,4 +1,5 @@
 <?php
+namespace Zqe;
 
 /**
  * Define the internationalization functionality

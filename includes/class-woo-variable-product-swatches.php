@@ -1,4 +1,5 @@
 <?php
+namespace Zqe;
 
 /**
  * The file that defines the core plugin class
@@ -28,6 +29,23 @@
  * @author     ZQE <dev@zqe.io>
  */
 class Woo_Variable_Product_Swatches {
+	
+	/**
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 * @var      \Zqe\Woo_Variable_Product_Swatches_Option    $option    Maintains and registers all hooks for the plugin.
+	 */
+	public $option;
+	
+	/**
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 * @var      \Zqe\Woo_Variable_Product_Swatches_Helper    $helper    Maintains and registers all hooks for the plugin.
+	 */
+	public $helper;
+
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -35,7 +53,7 @@ class Woo_Variable_Product_Swatches {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      Woo_Variable_Product_Swatches_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      \Zqe\Woo_Variable_Product_Swatches_Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -43,19 +61,19 @@ class Woo_Variable_Product_Swatches {
 	 * The unique identifier of this plugin.
 	 *
 	 * @since    1.0.0
-	 * @access   protected
+	 * @access   public
 	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
 	 */
-	protected $plugin_name;
+	public $name;
 
 	/**
 	 * The current version of the plugin.
 	 *
 	 * @since    1.0.0
-	 * @access   protected
+	 * @access   public
 	 * @var      string    $version    The current version of the plugin.
 	 */
-	protected $version;
+	public $version;
 
 	/**
 	 * Define the core functionality of the plugin.
@@ -86,10 +104,9 @@ class Woo_Variable_Product_Swatches {
 	 *
 	 * Include the following files that make up the plugin:
 	 *
+	 * - Woo_Variable_Product_Swatches_Option. Option of the plugin.
+	 * - Woo_Variable_Product_Swatches_Helper. Helper of the plugin.
 	 * - Woo_Variable_Product_Swatches_Loader. Orchestrates the hooks of the plugin.
-	 * - Woo_Variable_Product_Swatches_i18n. Defines internationalization functionality.
-	 * - Woo_Variable_Product_Swatches_Admin. Defines all hooks for the admin area.
-	 * - Woo_Variable_Product_Swatches_Public. Defines all hooks for the public side of the site.
 	 *
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
@@ -99,30 +116,9 @@ class Woo_Variable_Product_Swatches {
 	 */
 	private function load_dependencies() {
 
-		/**
-		 * The class responsible for orchestrating the actions and filters of the
-		 * core plugin.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-woo-variable-product-swatches-loader.php';
-
-		/**
-		 * The class responsible for defining internationalization functionality
-		 * of the plugin.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-woo-variable-product-swatches-i18n.php';
-
-		/**
-		 * The class responsible for defining all actions that occur in the admin area.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-woo-variable-product-swatches-admin.php';
-
-		/**
-		 * The class responsible for defining all actions that occur in the public-facing
-		 * side of the site.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-woo-variable-product-swatches-public.php';
-
-		$this->loader = new Woo_Variable_Product_Swatches_Loader();
+		$this->option = new \Zqe\Woo_Variable_Product_Swatches_Option();
+		$this->helper = new \Zqe\Woo_Variable_Product_Swatches_Helper();
+		$this->loader = new \Zqe\Woo_Variable_Product_Swatches_Loader();
 
 	}
 
@@ -152,10 +148,15 @@ class Woo_Variable_Product_Swatches {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new Woo_Variable_Product_Swatches_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new Woo_Variable_Product_Swatches_Admin( $this );
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+        $this->loader->add_action( 'admin_menu', $plugin_admin, 'settings_menu' );
+        $this->loader->add_action( 'admin_init', $plugin_admin, 'settings_init' );
+		$this->loader->add_filter( 'product_attributes_type_selector', $plugin_admin, 'product_attributes_type_selector_filter' );
+        $this->loader->add_action( 'admin_init', $plugin_admin, 'add_attribute_meta' );
+		$this->loader->add_action( 'woocommerce_product_option_terms', $plugin_admin, 'woocommerce_product_option_terms_action', 20, 3 );
 
 	}
 
@@ -168,10 +169,17 @@ class Woo_Variable_Product_Swatches {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Woo_Variable_Product_Swatches_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new Woo_Variable_Product_Swatches_Public( $this );
+
+		$plugin_public = new \Zqe\Woo_Variable_Product_Swatches_Public( $this );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_filter( 'body_class',  $plugin_public, 'body_class'  );
+		$this->loader->add_filter( 'woocommerce_dropdown_variation_attribute_options_html', $plugin_public, 'woocommerce_dropdown_variation_attribute_options_html_filter', 200, 2 );
+		$this->loader->add_filter( 'woocommerce_variation_is_active', $plugin_public, 'woocommerce_variation_is_active_filter', 10, 2 );
+		$this->loader->add_filter( 'woocommerce_available_variation', $plugin_public, 'woocommerce_available_variation_filter', 10, 3 );
+		$this->loader->add_filter( 'woocommerce_ajax_variation_threshold', $plugin_public, 'woocommerce_ajax_variation_threshold_filter' );
 
 	}
 
@@ -191,8 +199,8 @@ class Woo_Variable_Product_Swatches {
 	 * @since     1.0.0
 	 * @return    string    The name of the plugin.
 	 */
-	public function get_plugin_name() {
-		return $this->plugin_name;
+	public function get_name() {
+		return $this->name;
 	}
 
 	/**
@@ -215,4 +223,13 @@ class Woo_Variable_Product_Swatches {
 		return $this->version;
 	}
 
+	/**
+	 * Retrieve the basename number of the plugin.
+	 *
+	 * @since     1.0.0
+	 * @return    string    The basename number of the plugin.
+	 */
+	public function get_basename() {
+		return WOO_VARIABLE_PRODUCT_SWATCHES_BASENAME;
+	}
 }

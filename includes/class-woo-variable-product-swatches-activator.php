@@ -1,4 +1,5 @@
 <?php
+namespace Zqe;
 
 /**
  * Fired during plugin activation

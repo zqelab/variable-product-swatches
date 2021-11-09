@@ -1,4 +1,5 @@
 <?php
+namespace Zqe;
 
 /**
  * Register all actions and filters for the plugin

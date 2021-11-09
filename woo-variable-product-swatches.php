@@ -31,19 +31,27 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 /**
+ * The code that runs during agendapress activation.
+ * This action is documented in vendor/autoload.php
+ */
+include dirname(__FILE__) . '/vendor/autoload.php';
+
+/**
  * Currently plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
 define( 'WOO_VARIABLE_PRODUCT_SWATCHES_VERSION', '1.0.0' );
+define( 'WOO_VARIABLE_PRODUCT_SWATCHES_BASENAME', plugin_basename( __FILE__ ) );
+define( 'WOO_VARIABLE_PRODUCT_SWATCHES_URI', plugin_dir_url( __FILE__ ) );
+define( 'WOO_VARIABLE_PRODUCT_SWATCHES_PATH', plugin_dir_path( __FILE__ ) );
 
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-woo-variable-product-swatches-activator.php
  */
 function activate_woo_variable_product_swatches() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-woo-variable-product-swatches-activator.php';
-	Woo_Variable_Product_Swatches_Activator::activate();
+	\Zqe\Woo_Variable_Product_Swatches_Activator::activate();
 }
 
 /**
@@ -51,18 +59,11 @@ function activate_woo_variable_product_swatches() {
  * This action is documented in includes/class-woo-variable-product-swatches-deactivator.php
  */
 function deactivate_woo_variable_product_swatches() {
-	require_once plugin_dir_path( __FILE__ ) . 'includes/class-woo-variable-product-swatches-deactivator.php';
-	Woo_Variable_Product_Swatches_Deactivator::deactivate();
+	\Zqe\Woo_Variable_Product_Swatches_Deactivator::deactivate();
 }
 
 register_activation_hook( __FILE__, 'activate_woo_variable_product_swatches' );
 register_deactivation_hook( __FILE__, 'deactivate_woo_variable_product_swatches' );
-
-/**
- * The core plugin class that is used to define internationalization,
- * admin-specific hooks, and public-facing site hooks.
- */
-require plugin_dir_path( __FILE__ ) . 'includes/class-woo-variable-product-swatches.php';
 
 /**
  * Begins execution of the plugin.
@@ -75,8 +76,8 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-woo-variable-product-swatc
  */
 function run_woo_variable_product_swatches() {
 
-	$plugin = new Woo_Variable_Product_Swatches();
+	$plugin = new \Zqe\Woo_Variable_Product_Swatches();
 	$plugin->run();
 
 }
-run_woo_variable_product_swatches();
+add_action( 'plugins_loaded', 'run_woo_variable_product_swatches', 25 );

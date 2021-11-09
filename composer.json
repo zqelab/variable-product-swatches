@@ -1,0 +1,22 @@
+{
+    "name": "zqelab/woo-variable-product-swatches",
+    "authors": [
+        {
+            "name": "ZQE",
+            "email": "dev@zqe.io"
+        }
+    ],
+    "require": { 
+        "zqelab/wp-settings-api": "dev-main"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "Zqe\\": ["includes/", "admin/", "public/"]
+        },
+        "classmap": [
+            "includes",
+            "public",
+            "admin"
+        ]
+    }
+}
