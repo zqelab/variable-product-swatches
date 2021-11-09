@@ -1,5 +1,7 @@
 composer.phar
 /vendor/
+/public/src/
+/admin/src/
 /node_modules/
 composer.lock
 package-lock.json
