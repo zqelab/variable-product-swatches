@@ -22,7 +22,7 @@
  * @link       https://github.com/zqelab
  * @since      1.0.0
  *
- * @package    Woo_Variable_Product_Swatches
+ * @package    Variable_Product_Swatches
  */
 
 // If uninstall not called from WordPress, then exit.

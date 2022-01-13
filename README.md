@@ -1,1 +1,1 @@
-# woo-variable-product-swatches
+# variable-product-swatches

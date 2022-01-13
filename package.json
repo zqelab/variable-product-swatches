@@ -1,5 +1,5 @@
 {
-  "name": "woo-variable-product-swatches",
+  "name": "variable-product-swatches",
   "version": "1.0.0",
   "description": "",
   "private": "true",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zqelab/woo-variable-product-swatches.git"
+    "url": "git+https://github.com/zqelab/variable-product-swatches.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/zqelab/woo-variable-product-swatches/issues"
+    "url": "https://github.com/zqelab/variable-product-swatches/issues"
   },
-  "homepage": "https://github.com/zqelab/woo-variable-product-swatches#readme",
+  "homepage": "https://github.com/zqelab/variable-product-swatches#readme",
   "devDependencies": {
     "autoprefixer": "^10.4.0",
     "browser-sync-webpack-plugin": "^2.3.0",

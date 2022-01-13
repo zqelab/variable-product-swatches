@@ -3,7 +3,9 @@ composer.phar
 /public/src/
 /admin/src/
 /node_modules/
+composer.json
 composer.lock
+package.json
 package-lock.json
 LICENSE.txt
 README.txt
