@@ -15,7 +15,7 @@
  * @wordpress-plugin
  * Plugin Name:       Variable Product Swatches
  * Plugin URI:        https://github.com/zqelab/variable-product-swatches
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Description:       Variable Product Swatches is altimate solution for Color, Image, Button and Radio Swatches For WooCommerce Variable Product Attributes.
  * Version:           1.0.0
  * Author:            ZQE
  * Author URI:        https://github.com/zqelab
@@ -51,7 +51,7 @@ if ( ! function_exists( 'vps_fs' ) ) {
                 'type'                => 'plugin',
                 'public_key'          => 'pk_c9403e7faf41a5dfd7e987a93afcd',
                 'is_premium'          => false,
-                'has_addons'          => true,
+                'has_addons'          => false,
                 'has_paid_plans'      => false,
                 'menu'                => array(
                     'slug'           => 'variable-product-swatches',

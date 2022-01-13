@@ -236,7 +236,7 @@ class Variable_Product_Swatches_Admin {
 		if ( $file == $this->plugin->get_basename() ) {
 
 			$report_url = esc_url( 'https://zqe.io/tickets/' );
-			$documentation_url = esc_url( 'https://zqe.io/docs/woocommerce-variation-swatches/' );
+			$documentation_url = esc_url( 'https://zqe.io/docs/variable-product-swatches-documentation/' );
 
 			$row_meta['documentation'] = sprintf( 
 				'<a target="_blank" href="%1$s" title="%2$s">%2$s</a>', 

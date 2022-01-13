@@ -155,7 +155,7 @@ class Variable_Product_Swatches {
 		$this->loader->add_action( 'admin_notices', $plugin_admin, 'wc_version_requirement_notice' );
 
 		$this->loader->add_filter( 'plugin_row_meta', $plugin_admin, 'plugin_row_meta', 10, 2 );
-		$this->loader->add_filter( 'plugin_action_links_' . $this->get_basename(), $plugin_admin, 'plugin_action_links' );
+		//$this->loader->add_filter( 'plugin_action_links_' . $this->get_basename(), $plugin_admin, 'plugin_action_links' );
 
         $this->loader->add_action( 'admin_menu', $plugin_admin, 'settings_menu' );
         $this->loader->add_action( 'admin_init', $plugin_admin, 'settings_init' );

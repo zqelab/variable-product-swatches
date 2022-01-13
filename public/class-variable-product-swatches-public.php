@@ -405,7 +405,9 @@ class Variable_Product_Swatches_Public {
      * @since    1.0.0
      */
 	public function swatch_image($attachment_id, $option) {
-		$swatch_image_size = $this->plugin->option->get('swatch_image_size');
+		$swatch_image_size = $this->plugin->option->get('image_swatch_size');
+      
+
 		$image = wp_get_attachment_image_src($attachment_id, $swatch_image_size);
 		
 		if( ! $image ) {
