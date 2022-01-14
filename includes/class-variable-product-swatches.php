@@ -162,6 +162,10 @@ class Variable_Product_Swatches {
 		$this->loader->add_filter( 'product_attributes_type_selector', $plugin_admin, 'product_attributes_type_selector_filter' );
         $this->loader->add_action( 'admin_init', $plugin_admin, 'add_attribute_meta' );
 		$this->loader->add_action( 'woocommerce_product_option_terms', $plugin_admin, 'woocommerce_product_option_terms_action', 20, 3 );
+
+		$this->loader->add_action( 'wp_dashboard_setup', $plugin_admin, 'dashboard_add_widgets' );
+
+
 	}
 
 	/**
