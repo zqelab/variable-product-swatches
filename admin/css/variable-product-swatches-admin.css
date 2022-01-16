@@ -31,6 +31,9 @@
 #variable_product_swatches_dashboard_widget_news .inside{
   padding-bottom: 0;
 }
+#variable_product_swatches_dashboard_widget_news .dashboard-widget-control-form {
+  padding-bottom: 12px;
+}
 .variable-product-swatches-community-events-footer {
     padding: 12px;
     border-top: 1px solid #f0f0f1;

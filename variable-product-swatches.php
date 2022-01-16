@@ -43,7 +43,7 @@ if ( ! function_exists( 'vps_fs' ) ) {
 
         if ( ! isset( $vps_fs ) ) {
             // Include Freemius SDK.
-            require_once dirname(__FILE__) . '/includes/freemius/start.php';
+            require_once dirname(__FILE__) . '/freemius/start.php';
 
             $vps_fs = fs_dynamic_init( array(
                 'id'                  => '9729',
@@ -51,7 +51,7 @@ if ( ! function_exists( 'vps_fs' ) ) {
                 'type'                => 'plugin',
                 'public_key'          => 'pk_c9403e7faf41a5dfd7e987a93afcd',
                 'is_premium'          => false,
-                'has_addons'          => false,
+                'has_addons'          => true,
                 'has_paid_plans'      => false,
                 'menu'                => array(
                     'slug'           => 'variable-product-swatches',
