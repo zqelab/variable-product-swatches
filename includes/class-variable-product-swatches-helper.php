@@ -96,6 +96,9 @@ class Variable_Product_Swatches_Helper {
                 'type'  => 'image'
             )
         );
+
+        $fields = apply_filters( 'vps_attribute_meta_fields', $fields );
+
         if ( $field_id ) {
             return isset( $fields[ $field_id ] ) ? $fields [$field_id ] : array();
         }

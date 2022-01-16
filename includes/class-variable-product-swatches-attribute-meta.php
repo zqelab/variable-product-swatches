@@ -225,11 +225,46 @@ class Variable_Product_Swatches_Attribute_Meta {
             }
             echo ob_get_clean();
             switch ($field['type']) {
+
+                case 'text':
+                case 'url':
+                    ob_start();
+                    ?>
+                    <input name="<?php echo $field['id'] ?>" id="<?php echo $field['id'] ?>"
+                           type="<?php echo $field['type'] ?>"
+                           value="<?php echo $field['value'] ?>"
+                           size="<?php echo $field['size'] ?>">
+                    <?php
+                    echo ob_get_clean();
+                    break;
+
                 case 'color':
                     echo sprintf( 
                         '<input type="text" class="zqe-color-picker wp-color-picker" name="%1$s" value="%2$s" />', $field['id'], $field['value']
                     );
                     break;
+
+                case 'select':
+                case 'select2':
+
+                    $field['options'] = isset( $field['options'] ) ? $field['options'] : array();
+                    $field['multiple'] = isset( $field['multiple'] ) ? ' multiple="multiple"' : '';
+                    $css_class         = ( $field['type'] == 'select2' ) ? 'vps-selectwoo' : '';
+
+                    ob_start();
+                    ?>
+                    <select name="<?php echo $field['id'] ?>" id="<?php echo $field['id'] ?>" class="<?php echo $css_class ?>" <?php echo $field['multiple'] ?>>
+                        <?php
+                        foreach ( $field['options'] as $key => $option ) {
+                            echo '<option' . selected( $field['value'], $key, false ) . ' value="' . $key . '">' . $option . '</option>';
+                        }
+                        ?>
+                    </select>
+                    <?php
+                    echo ob_get_clean();
+                    break;
+
+
                 case 'image':
                     ob_start();
                     ?>
