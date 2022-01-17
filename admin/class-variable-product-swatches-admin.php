@@ -96,7 +96,7 @@ class Variable_Product_Swatches_Admin {
 			'add_media' => esc_html__( 'Add Media', 'variable-product-swatches' ),
 			'placeholder_img' => function_exists('wc_placeholder_img_src') ? wc_placeholder_img_src() : null,
 			'ajaxurl' => esc_url( admin_url( 'admin-ajax.php', 'relative' ) ),
-			'nonce' => wp_create_nonce( 'wvs_plugin_nonce' ),
+			'nonce' => wp_create_nonce( 'variable_product_swatches_plugin_nonce' ),
 		) );
 	}
     
@@ -167,7 +167,7 @@ class Variable_Product_Swatches_Admin {
 			$fields = $this->plugin->helper->attribute_meta_fields( $attribute_taxonomy->attribute_type );
 
 			if ( ! empty( $fields ) ) { ?>
-				<button disabled="disabled" class="button fr plus wvs_add_new_attribute" data-dialog_title="<?php printf( esc_html__( 'Add new %s', 'variable-product-swatches' ), esc_attr( $attribute_taxonomy->attribute_label ) ) ?>">
+				<button disabled="disabled" class="button fr plus variable_product_swatches_add_new_attribute" data-dialog_title="<?php printf( esc_html__( 'Add new %s', 'variable-product-swatches' ), esc_attr( $attribute_taxonomy->attribute_label ) ) ?>">
 					<?php esc_html_e( 'Add new', 'variable-product-swatches' ); ?>
 				</button>
 			<?php } else { ?>

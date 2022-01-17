@@ -36,16 +36,16 @@ if ( ! defined( 'WPINC' ) ) {
  */
 include dirname(__FILE__) . '/vendor/autoload.php';
 
-if ( ! function_exists( 'vps_fs' ) ) {
+if ( ! function_exists( 'variable_product_swatches_fs' ) ) {
     // Create a helper function for easy SDK access.
-    function vps_fs() {
-        global $vps_fs;
+    function variable_product_swatches_fs() {
+        global $variable_product_swatches_fs;
 
-        if ( ! isset( $vps_fs ) ) {
+        if ( ! isset( $variable_product_swatches_fs ) ) {
             // Include Freemius SDK.
             require_once dirname(__FILE__) . '/includes/freemius/start.php';
 
-            $vps_fs = fs_dynamic_init( array(
+            $variable_product_swatches_fs = fs_dynamic_init( array(
                 'id'                  => '9729',
                 'slug'                => 'variable-product-swatches',
                 'type'                => 'plugin',
@@ -59,13 +59,13 @@ if ( ! function_exists( 'vps_fs' ) ) {
             ) );
         }
 
-        return $vps_fs;
+        return $variable_product_swatches_fs;
     }
 
     // Init Freemius.
-    vps_fs();
+    variable_product_swatches_fs();
     // Signal that SDK was initiated.
-    do_action( 'vps_fs_loaded' );
+    do_action( 'variable_product_swatches_fs_loaded' );
 }
 
 /**

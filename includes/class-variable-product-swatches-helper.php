@@ -71,7 +71,7 @@ class Variable_Product_Swatches_Helper {
         $types['radio'] = array(
             'title'   => esc_html__('Radio', 'variable-product-swatches'),
         );
-        return apply_filters('vps_available_attributes_types', $types);
+        return apply_filters('variable_product_swatches_available_attributes_types', $types);
 	}
     
     /**
@@ -97,7 +97,7 @@ class Variable_Product_Swatches_Helper {
             )
         );
 
-        $fields = apply_filters( 'vps_attribute_meta_fields', $fields );
+        $fields = apply_filters( 'variable_product_swatches_attribute_meta_fields', $fields );
 
         if ( $field_id ) {
             return isset( $fields[ $field_id ] ) ? $fields [$field_id ] : array();

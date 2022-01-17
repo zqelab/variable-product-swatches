@@ -233,7 +233,7 @@ class Variable_Product_Swatches_Attribute_Meta {
                     <input name="<?php echo $field['id'] ?>" id="<?php echo $field['id'] ?>"
                            type="<?php echo $field['type'] ?>"
                            value="<?php echo $field['value'] ?>"
-                           size="<?php echo $field['size'] ?>">
+                           >
                     <?php
                     echo ob_get_clean();
                     break;
@@ -249,7 +249,7 @@ class Variable_Product_Swatches_Attribute_Meta {
 
                     $field['options'] = isset( $field['options'] ) ? $field['options'] : array();
                     $field['multiple'] = isset( $field['multiple'] ) ? ' multiple="multiple"' : '';
-                    $css_class         = ( $field['type'] == 'select2' ) ? 'vps-selectwoo' : '';
+                    $css_class         = ( $field['type'] == 'select2' ) ? 'variable-product-swatches-selectwoo' : '';
 
                     ob_start();
                     ?>

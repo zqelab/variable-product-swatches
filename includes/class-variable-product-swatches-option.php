@@ -34,7 +34,7 @@ class Variable_Product_Swatches_Option {
      * @access   public
      * @var      string    $name    Option name for the plugin.
      */
-    public $name = 'vps_option';
+    public $name = 'variable_product_swatches_option';
 
 	/**
 	 *
@@ -70,9 +70,9 @@ class Variable_Product_Swatches_Option {
 	 */
     public function get_pages() {
 
-        $pages = apply_filters( 'vps_option', array(
+        $pages = apply_filters( 'variable_product_swatches_option', array(
             apply_filters(
-                'vps_option_basic_group',
+                'variable_product_swatches_option_basic_group',
                 array(
                     'group' => 'basic_group',
                     'id' => 'basic',
@@ -240,7 +240,7 @@ class Variable_Product_Swatches_Option {
                 )
             ),
             apply_filters(
-                'vps_option_advanced_group',
+                'variable_product_swatches_option_advanced_group',
                 array(
                     'id' => 'advanced',
                     'title' => 'Advanced',

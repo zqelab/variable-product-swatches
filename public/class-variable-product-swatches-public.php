@@ -86,7 +86,13 @@ class Variable_Product_Swatches_Public {
 		 */
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		wp_enqueue_script( $this->plugin->name, plugin_dir_url(__FILE__) . 'js/variable-product-swatches-public' . $suffix . '.js', array('jquery', 'wc-add-to-cart', 'wc-add-to-cart-variation'), $this->plugin->version, true );
+		wp_enqueue_script( 
+			$this->plugin->name, 
+			plugin_dir_url(__FILE__) . 'js/variable-product-swatches-public' . $suffix . '.js', 
+			array('jquery', 'wc-add-to-cart', 'wc-add-to-cart-variation'), 
+			$this->plugin->version, 
+			true 
+		);
 		
 		wp_localize_script( $this->plugin->name, '_VPS', array(
 			'option' => $this->plugin->option->get(),
@@ -122,7 +128,10 @@ class Variable_Product_Swatches_Public {
      */
 	public function body_class( $classes ) {
 
+		$classes[] = 'variable-product-swatches';
+
 		$show_selected_attribute = $this->plugin->option->get('show_selected_variation');
+
 		if ( $show_selected_attribute ) {
 			$classes[] = 'variable-product-swatches-show-selected-attribute';
 		}
