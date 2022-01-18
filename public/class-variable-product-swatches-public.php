@@ -85,11 +85,18 @@ class Variable_Product_Swatches_Public {
 		 * class.
 		 */
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		
+		$dep = ['jquery'];
+
+		if('yes' === get_option('woocommerce_enable_ajax_add_to_cart')) {
+			array_push($dep, 'wc-add-to-cart');
+			array_push($dep, 'wc-add-to-cart-variation');
+		}
 
 		wp_enqueue_script( 
 			$this->plugin->name, 
 			plugin_dir_url(__FILE__) . 'js/variable-product-swatches-public' . $suffix . '.js', 
-			array('jquery', 'wc-add-to-cart', 'wc-add-to-cart-variation'), 
+			$dep, 
 			$this->plugin->version, 
 			true 
 		);

@@ -304,7 +304,6 @@ class Variable_Product_Swatches_Option {
                             )
                         ),
                         array(
-
                             'id' => 'ajax_section',
                             'title' => 'Ajax Section',
                             'desc' => 'Advanced change some visual styles',
@@ -339,6 +338,47 @@ class Variable_Product_Swatches_Option {
 
                             )
                         ),
+
+
+                        array(
+                            'id' => 'performance_section',
+                            'title' => 'Performance Section',
+                            'desc' => 'Change for Performance',
+                            'fields' => array(
+                                array(
+                                    'id'      => 'defer_load_js',
+                                    'type'    => 'checkbox',
+                                    'title'   => esc_html__( 'Defer Load JS', 'woo-variation-swatches' ),
+                                    'desc'    => esc_html__( 'Defer Load JS for PageSpeed Score. If you use any caching plugin or your server have HTTP2 support you do not have to use it', 'woo-variation-swatches' ),
+                                    'default' => false
+                                ),
+                                array(
+                                    'id'      => 'use_transient',
+                                    'type'    => 'checkbox',
+                                    'title'   => esc_html__( 'Use Transient Cache', 'woo-variation-swatches' ),
+                                    'desc'    => esc_html__( 'Use Transient Cache for PageSpeed Score. If you use any caching plugin you do not have to use it', 'woo-variation-swatches' ),
+                                    'default' => false
+                                )
+                            
+
+
+                            )
+                        ),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     )
                 )
             )
