@@ -138,7 +138,6 @@ class Variable_Product_Swatches_Public {
 		$classes[] = 'variable-product-swatches';
 
 		$show_selected_attribute = $this->plugin->option->get('show_selected_variation');
-
 		if ( $show_selected_attribute ) {
 			$classes[] = 'variable-product-swatches-show-selected-attribute';
 		}
@@ -158,7 +157,7 @@ class Variable_Product_Swatches_Public {
 			$classes[] = 'variable-product-swatches-' . esc_attr($attribute_behavior);
 		}
 
-		return $classes;
+		return apply_filters('variable_product_swatches_body_class', array_unique($classes));
 	}
 
     /**
@@ -206,7 +205,9 @@ class Variable_Product_Swatches_Public {
 				return $html;
 			}
 		}
-		return $html;
+
+		return apply_filters( 'variable_product_swatches_variation_attribute_options_html', $html, $args, $image_default, $button_default );
+
 	}
     
     /**
@@ -262,176 +263,17 @@ class Variable_Product_Swatches_Public {
 			}
 		}
 		echo '</select>';
-		echo $this->swatches_wrapper($this->swatches_items($args), $args);
-	}
-
-    /**
-     *
-     * @since    1.0.0
-     */
-	public function swatches_wrapper($contents, $args) {
-
-		$type = $args['attribute_type'];
-
-		$classes = array();
-
-		$classes[] = 'swatches-items-wrapper-'.$type;
-
-		if( $type == 'image' ) {
-			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('image_style');
-		}
-
-		if( $type == 'color' ) {
-			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('color_style');
-		}
-
-		if( $type == 'radio' ) {
-			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('radio_style');
-		}
-
-		if( $type == 'button' ) {
-			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('button_style');
-		}
-
-		$attribute = $args['attribute'];
-
-		$options = $args['options'];
-
-		return sprintf(
-			'<ul class="swatches-items-wrapper %1$s" data-attribute_name="%2$s" data-attribute_values="%3$s">%4$s</ul>',
-			trim(implode(' ', array_unique($classes))),
-			esc_attr(wc_variation_attribute_name($attribute)),
-			wc_esc_json(wp_json_encode(array_values($options))),
-			$contents
-		);
-	}
-    
-    /**
-     *
-     * @since    1.0.0
-     */
-	public function swatches_items( $args, $saved_attribute = array(), $html = '' ) {
-
-		$options = $args['options'];
-		$product = $args['product'];
-		$attribute = $args['attribute'];
-
-		if (!empty($options)) {
-			if ($product && taxonomy_exists($attribute)) {
-				$terms = wc_get_product_terms($product->get_id(), $attribute, array('fields' => 'all'));
-				foreach ($terms as $term) {
-					if (in_array($term->slug, $options)) {
-						$option = esc_html(apply_filters('woocommerce_variation_option_name', $term->name, $term, $attribute, $product));
-						$selected = selected(sanitize_title($args['selected']), $term->slug, false);
-						$option_slug = $term->slug;
-						$term_id = $term->term_id;
-						$html .= $this->build_swatches_item($args, $option, $option_slug, $selected, $term_id);
-					}
-				}
-			} else {
-				foreach ($options as $option) {
-					$option = esc_html(apply_filters('woocommerce_variation_option_name', $option, null, $attribute, $product));
-					$selected = sanitize_title($args['selected']) === $args['selected'] ? selected($args['selected'], sanitize_title($option), false) : selected($args['selected'], $option, false);
-					$option_slug = $option;
-					$term_id = null;
-					$html .= $this->build_swatches_item($args, $option, $option_slug, $selected, $term_id);
-				}
-			}
-		}
-		return $html;
-	}
-    
-    /**
-     *
-     * @since    1.0.0
-     */
-	public function build_swatches_item($args, $option, $option_slug, $selected, $term_id, $html = '') {
 
 
-		$type = $args['attribute_type'];
-		$product = $args['product'];
-		$attribute = $args['attribute'];
-		$assigned = isset($args['assigned']) ? $args['assigned'] : array();
-		$name = $args['name'] ? $args['name'] : 'attribute_' . sanitize_title($attribute);
+
 		
-		$is_in_stock_any_variation = false;
-		$is_in_stock = false;
-		$variation_stock_count = 0;
-		$variations    = $product->get_available_variations();
-		
-		$stockcount = $this->plugin->option->get('stockcount');
-		$get_variations = count( $product->get_children() ) <= apply_filters( 'woocommerce_ajax_variation_threshold', 30, $product );
-		$available_variations = $get_variations ? $product->get_available_variations() : array();
-
-		foreach ($variations as $variation) {
-			if ($variation['is_in_stock']) {
-				$is_in_stock_any_variation = true;
-			}
-			if (($variation['attributes'][$name] == $option_slug && $variation['is_in_stock']) || (!$variation['attributes'][$name] && $is_in_stock_any_variation)) {
-				$variationObj = wc_get_product($variation['variation_id']);
-				$variation_stock_count += $variationObj->get_stock_quantity();
-				$is_in_stock = true;
-			}
-		}
-
-		$label = sprintf( '<span class="swatch-item-span-label">%1$s</span>', $option );
-
-		$html .= sprintf( '<li class="swatch-item swatch-item-%1$s swatch-item-%1$s-%2$s %3$s %4$s" title="%5$s" data-title="%5$s" data-value="%2$s" >', esc_attr( $type ), esc_attr( $option_slug ), esc_attr( $selected ? 'swatch-item-selected' : '' ), esc_attr( ( ! $is_in_stock ) ? 'swatch-item-disabled' : '' ), $option );
-		$html .= sprintf( '<div class="swatch-item-wrapper">');
-		switch ( $type ) {
-			case 'image':
-				$image_swatch_show_label = $this->plugin->option->get('image_swatch_show_label');
-
-				if (isset($args['attribute_type_default'])) {
-					$attachment_id = $assigned[$option_slug]['image_id'];
-				} else {
-					$attachment_id = absint( get_term_meta( $term_id, 'product_attribute_image', true ) );
-				}
-				$image = $this->swatch_image( $attachment_id, $option );
-				$html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s">%2$s</span>%3$s', esc_attr( $type ), $image, ( $image_swatch_show_label  ? $label : '' ) );
-				break;
-			case 'color':
-				$color_swatch_show_label = $this->plugin->option->get('color_swatch_show_label');
-				$color = sanitize_hex_color(get_term_meta($term_id, 'product_attribute_color', true));
-				$html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s" style="background-color:%2$s;"></span>%3$s', esc_attr( $type ), esc_html( $color ), ( $color_swatch_show_label  ? $label : '' ) );
-				break;
-			case 'button':
-				$html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s">%2$s</span>', esc_attr( $type ), esc_html( $option ) );
-				break;
-			case 'radio':
-				$html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s"></span><span class="swatch-item-span-label">%2$s</span>', esc_attr( $type ), esc_html( $option ) );
-				if( $available_variations && $stockcount) {
-					$html .= sprintf( '<span class="swatch-item-stock-count">%1$s left</span>', $variation_stock_count );
-				}
-				break;
-			default:
-				break;
-		}
-		$html .= sprintf( '</div>');
-		if( $available_variations && $stockcount && $type != 'radio') {
-			$html .= sprintf( '<span class="swatch-item-stock-count">%1$s left</span>', $variation_stock_count );
-		}
-		$html .= sprintf( '</li>');
-
-		return $html;
+		echo $this->plugin->helper->swatches_wrapper( $this->plugin->helper->swatches_items($args, $this->plugin), $args, $this->plugin);
 	}
+
+
+
     
-    /**
-     *
-     * @since    1.0.0
-     */
-	public function swatch_image($attachment_id, $option) {
-		$swatch_image_size = $this->plugin->option->get('image_swatch_size');
-      
 
-		$image = wp_get_attachment_image_src($attachment_id, $swatch_image_size);
-		
-		if( ! $image ) {
-			$image = array( wc_placeholder_img_src(), '', '' );
-		}
-
-		return  sprintf('<img class="swatch-item-image" alt="%1$s" src="%2$s" width="%3$s" height="%4$s" />', esc_attr($option), esc_url($image[0]),esc_attr($image[1]),esc_attr($image[2]));
-	}
     
     /**
      *
