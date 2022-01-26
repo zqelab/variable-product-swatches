@@ -351,13 +351,6 @@ class Variable_Product_Swatches_Option {
                                     'desc'    => esc_html__( 'Defer Load JS for PageSpeed Score. If you use any caching plugin or your server have HTTP2 support you do not have to use it', 'variable-product-swatches' ),
                                     'default' => ''
                                 ),
-                                array(
-                                    'id'      => 'use_transient',
-                                    'type'    => 'checkbox',
-                                    'title'   => esc_html__( 'Use Transient Cache', 'variable-product-swatches' ),
-                                    'desc'    => esc_html__( 'Use Transient Cache for PageSpeed Score. If you use any caching plugin you do not have to use it', 'variable-product-swatches' ),
-                                    'default' => ''
-                                )
                             
                             )
                         ),

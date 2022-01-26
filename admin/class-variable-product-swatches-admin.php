@@ -85,7 +85,9 @@ class Variable_Product_Swatches_Admin {
 		 */
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		wp_enqueue_script( $this->plugin->name, plugin_dir_url( __FILE__ ) . 'js/variable-product-swatches-admin' . $suffix . '.js', array( 'jquery' ), $this->plugin->version, false );
+		wp_enqueue_media();
+
+		wp_enqueue_script( $this->plugin->name, plugin_dir_url( __FILE__ ) . 'js/variable-product-swatches-admin' . $suffix . '.js', array( 'jquery' ), $this->plugin->version, true );
 		
 		wp_localize_script( $this->plugin->name, '_VPS', array(
 			'media_title' => esc_html__( 'Choose an Image', 'variable-product-swatches' ),

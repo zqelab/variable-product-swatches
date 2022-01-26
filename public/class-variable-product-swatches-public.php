@@ -165,115 +165,65 @@ class Variable_Product_Swatches_Public {
      * @since    1.0.0
      */
 	public function woocommerce_dropdown_variation_attribute_options_html_filter($html, $args) {
+		
+		if ( isset( $_POST['action'] ) && $_POST['action'] === 'woocommerce_configure_bundle_order_item' ) {
+			return $html;
+		}
+		
 
+
+		if ( apply_filters( 'variable_product_swatches_default_variation_attribute_options_html', false, $args, $html ) ) {
+			return $html;
+		}
+
+		// WooCommerce Product Bundle Fixing
 		if ( isset( $_POST['action'] ) && $_POST['action'] === 'woocommerce_configure_bundle_order_item' ) {
 			return $html;
 		}
 
-		$image_default = $this->plugin->option->get( 'image_default' );
-		$button_default = $this->plugin->option->get( 'button_default' );
 
+
+
+		
+		$image_default = apply_filters( 'variable_product_swatches_image_default', ! ! ( $this->plugin->option->get( 'image_default' ) ), $args );
+		$button_default = apply_filters( 'variable_product_swatches_button_default', ! ! ( $this->plugin->option->get( 'button_default' ) ), $args );
+		$args['attribute_type'] = 'select';
+		
+		if ( taxonomy_exists( $args['attribute'] ) ) {
+			$args['attribute_type'] = wc_get_attribute( wc_attribute_taxonomy_id_by_name( $args['attribute'] ) )->type;
+		}
+		
+		$args['attribute_type_default'] = false;
+		
+		if ( ! in_array($args['attribute_type'], array_keys( $this->plugin->helper->attributes_types() ) ) ) {
+			$args['attribute_type_default'] = true;
+			if ( $image_default ) {
+				$default_image_attribute = apply_filters( 'variable_product_swatches_default_image_attribute', $this->plugin->option->get( 'default_image_attribute' ), $args );
+				$assigned = $this->plugin->helper->assigned_image( $args, $default_image_attribute );
+				if ( ! empty( $assigned ) ) {
+					$args['assigned'] = $assigned;
+					$args['attribute_type'] = 'image';
+				}
+			}
+			if ( $button_default ) {
+				if ( ! isset( $args['assigned'] ) ) {
+					$args['attribute_type'] = 'button';
+				}
+			}
+		}
+		
 		if ( apply_filters( 'variable_product_swatches_no_individual_settings', true, $args, $image_default, $button_default ) ) {
-			$args['attribute_type'] = 'select';
-			if ( taxonomy_exists( $args['attribute'] ) ) {
-				$args['attribute_type'] = wc_get_attribute( wc_attribute_taxonomy_id_by_name( $args['attribute'] ) )->type;
-			}
-			if ( ! in_array($args['attribute_type'], array_keys( $this->plugin->helper->attributes_types() ) ) ) {
-				$args['attribute_type_default'] = true;
-				if ( $image_default ) {
-
-					$default_image_attribute =  $this->plugin->option->get( 'default_image_attribute' );
-
-					$assigned = $this->plugin->helper->assigned_image( $args, $default_image_attribute );
-					if ( ! empty( $assigned ) ) {
-						$args['assigned'] = $assigned;
-						$args['attribute_type'] = 'image';
-					}
-				}
-				if ( $button_default ) {
-					if ( ! isset( $args['assigned'] ) ) {
-						$args['attribute_type'] = 'button';
-					}
-				}
-			}
-
 			if ( in_array( $args['attribute_type'], array_keys( $this->plugin->helper->attributes_types() ) ) ) {
 				ob_start();
-				$this->variation_attribute_options( $args );
+				$this->plugin->helper->variation_attribute_options( $args, $this->plugin);
 				return ob_get_clean();
 			} else {
 				return $html;
 			}
 		}
 
-		return apply_filters( 'variable_product_swatches_variation_attribute_options_html', $html, $args, $image_default, $button_default );
-
+		return apply_filters( 'variable_product_swatches_variation_attribute_options_html', $html, $args );
 	}
-    
-    /**
-     *
-     * @since    1.0.0
-     */
-	public function variation_attribute_options($args) {
-		
-		$args = wp_parse_args(apply_filters('woocommerce_dropdown_variation_attribute_options_args', $args), array(
-			'options' => false,
-			'attribute' => false,
-			'product' => false,
-			'selected' => false,
-			'name' => '',
-			'id' => '',
-			'class' => '',
-			'show_option_none' => __('Choose an option', 'woocommerce'),
-		));
-		
-		$type = $args['attribute_type'];
-		$options = $args['options'];
-		$product = $args['product'];
-		$attribute = $args['attribute'];
-		$name = $args['name'] ? $args['name'] : 'attribute_' . sanitize_title($attribute);
-		$id = $args['id'] ? $args['id'] : sanitize_title($attribute);
-		$class = $args['class'];
-		$show_option_none = $args['show_option_none'] ? true : false;
-
-		$show_option_none_text = $args['show_option_none'] ? $args['show_option_none'] : __('Choose an option', 'woocommerce'); // We'll do our best to hide the placeholder, but we'll need to show something when resetting options. 
-		if (empty($options) && !empty($product) && !empty($attribute)) {
-			$attributes = $product->get_variation_attributes();
-			$options = $attributes[$attribute];
-		}
-		if ($type === 'select') {
-			echo '<select id="' . esc_attr($id) . '" name="' . esc_attr($name) . '" data-attribute_name="attribute_' . esc_attr(sanitize_title($attribute)) . '" data-show_option_none="' . ($show_option_none ? 'yes' : 'no') . '" class="' . esc_attr($class) . '">';
-		} else {
-			echo '<select id="' . esc_attr($id) . '" name="' . esc_attr($name) . '" data-attribute_name="attribute_' . esc_attr(sanitize_title($attribute)) . '" data-show_option_none="' . ($show_option_none ? 'yes' : 'no') . '" class="' . esc_attr($class) . ' variable-product-swatches-raw-select variable-product-swatches-raw-type-' . esc_attr($type) . '" style="display:none;" >';
-		}
-		echo '<option value="">' . esc_html($show_option_none_text) . '</option>';
-		if (!empty($options)) {
-			if ($product && taxonomy_exists($attribute)) {
-				$terms = wc_get_product_terms($product->get_id(), $attribute, array('fields' => 'all'));
-				foreach ($terms as $term) {
-					if (in_array($term->slug, $options)) {
-						echo '<option value="' . esc_attr($term->slug) . '" ' . selected(sanitize_title($args['selected']), $term->slug, false) . '>' . esc_html(apply_filters('woocommerce_variation_option_name', $term->name, $term, $attribute, $product)) . '</option>';
-					}
-				}
-			} else {
-				foreach ($options as $option) {
-					$selected = sanitize_title($args['selected']) === $args['selected'] ? selected($args['selected'], sanitize_title($option), false) : selected($args['selected'], $option, false);
-					echo '<option value="' . esc_attr($option) . '" ' . $selected . '>' . esc_html(apply_filters('woocommerce_variation_option_name', $option, null, $attribute, $product)) . '</option>';
-				}
-			}
-		}
-		echo '</select>';
-
-
-
-		
-		echo $this->plugin->helper->swatches_wrapper( $this->plugin->helper->swatches_items($args, $this->plugin), $args, $this->plugin);
-	}
-
-
-
-    
-
     
     /**
      *

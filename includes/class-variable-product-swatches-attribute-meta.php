@@ -141,9 +141,19 @@ class Variable_Product_Swatches_Attribute_Meta {
 
         if( $attribute->type == 'color' ){
             $value = sanitize_hex_color( get_term_meta( $term_id, 'product_attribute_color', true ) );
-            printf('<div class="variable-product-swatches-meta-preview" style="background-color:%s;"></div>', 
-                esc_attr( $value ) 
-            );
+            $is_dual = wc_string_to_bool( get_term_meta( $term_id, 'is_dual_color', true ) );
+            
+            if( $is_dual ) {
+                $secondary_color = sanitize_hex_color( get_term_meta( $term_id, 'secondary_color', true ) );
+                printf( '<div class="variable-product-swatches-meta-preview" style="background: linear-gradient(-45deg, %1$s 0%%, %1$s 50%%, %2$s 50%%, %2$s 100%%);"></div>',
+                    esc_attr( $secondary_color ), 
+                    esc_attr( $value ) 
+                );
+            } else {
+                printf('<div class="variable-product-swatches-meta-preview" style="background-color:%s;"></div>', 
+                    esc_attr( $value ) 
+                );
+            }
         }
         
         if( $attribute->type =='image' ){
