@@ -164,14 +164,12 @@ class Variable_Product_Swatches_Public {
      *
      * @since    1.0.0
      */
-	public function woocommerce_dropdown_variation_attribute_options_html_filter($html, $args) {
+	public function woocommerce_dropdown_variation_attribute_options_html($html, $args) {
 		
 		if ( isset( $_POST['action'] ) && $_POST['action'] === 'woocommerce_configure_bundle_order_item' ) {
 			return $html;
 		}
 		
-
-
 		if ( apply_filters( 'variable_product_swatches_default_variation_attribute_options_html', false, $args, $html ) ) {
 			return $html;
 		}
@@ -181,10 +179,6 @@ class Variable_Product_Swatches_Public {
 			return $html;
 		}
 
-
-
-
-		
 		$image_default = apply_filters( 'variable_product_swatches_image_default', ! ! ( $this->plugin->option->get( 'image_default' ) ), $args );
 		$button_default = apply_filters( 'variable_product_swatches_button_default', ! ! ( $this->plugin->option->get( 'button_default' ) ), $args );
 		$args['attribute_type'] = 'select';

@@ -230,6 +230,7 @@ class Variable_Product_Swatches_Helper {
         $classes = array();
 
         $image_default = $plugin->option->get( 'image_default' );
+        
         $button_default = $plugin->option->get( 'button_default' );
 
         if ( apply_filters( 'variable_product_swatches_no_individual_settings', true, $args, $image_default, $button_default ) ) {
@@ -241,21 +242,23 @@ class Variable_Product_Swatches_Helper {
             if( $type == 'image' ) {
                 $style = $plugin->option->get('image_style');
             }
+            
             if( $type == 'color' ) {
                 $style = $plugin->option->get('color_style');
             }
+
             if( $type == 'radio' ) {
                 $style = $plugin->option->get('radio_style');
             }
+
             if( $type == 'button' ) {
                 $style = $plugin->option->get('button_style');
             }
+
             $classes[] = 'swatches-items-wrapper-'.$style;
         }
 
-
         $classes = apply_filters( 'variable_product_swatches_swatches_wrapper_class', $classes, $args);
-
 
         $attribute = $args['attribute'];
 
@@ -302,11 +305,15 @@ class Variable_Product_Swatches_Helper {
                 $is_in_stock = true;
             }
         }
+        $tooltip_type = 'text';
+        $tooltip_content = $option;
+        $tooltip_placement = $plugin->option->get('tooltip_placement');
+        $tooltip = sprintf('<div class="swatch-item-tooltip swatch-item-tooltip-type-%3$s swatch-item-tooltip-%1$s" style="display:none;">%2$s</div>', $tooltip_placement, $tooltip_content, $tooltip_type);
 
         $label = sprintf( '<span class="swatch-item-span-label">%1$s</span>', $option );
 
-        $html .= sprintf( '<li class="swatch-item swatch-item-%1$s swatch-item-%1$s-%2$s %3$s %4$s" title="%5$s" data-title="%5$s" data-value="%2$s" >', esc_attr( $type ), esc_attr( $option_slug ), esc_attr( $selected ? 'swatch-item-selected' : '' ), esc_attr( ( ! $is_in_stock ) ? 'swatch-item-disabled' : '' ), $option );
-        $html .= sprintf( '<div class="swatch-item-wrapper">');
+        $html .= sprintf( '<li class="swatch-item swatch-item-%1$s swatch-item-%1$s-%2$s %3$s %4$s" title="%5$s" data-title="%5$s" data-value="%2$s" >%6$s', esc_attr( $type ), esc_attr( $option_slug ), esc_attr( $selected ? 'swatch-item-selected' : '' ), esc_attr( ( ! $is_in_stock ) ? 'swatch-item-disabled' : '' ), $option, $type !== 'radio' ? $tooltip : '' );
+        $html .= sprintf( '<div class="swatch-item-contents">');
         switch ( $type ) {
             case 'image':
                 $image_swatch_show_label = $plugin->option->get('image_swatch_show_label');
@@ -329,7 +336,7 @@ class Variable_Product_Swatches_Helper {
                 $html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s">%2$s</span>', esc_attr( $type ), esc_html( $option ) );
                 break;
             case 'radio':
-                $html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s"></span><span class="swatch-item-span-label">%2$s</span>', esc_attr( $type ), esc_html( $option ) );
+                $html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s">%3$s</span><span class="swatch-item-span-label">%2$s</span>', esc_attr( $type ), esc_html( $option ), $tooltip );
                 if( $available_variations && $stockcount) {
                     $html .= sprintf( '<span class="swatch-item-stock-count">%1$s left</span>', $variation_stock_count );
                 }
