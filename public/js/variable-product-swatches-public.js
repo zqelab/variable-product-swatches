@@ -96,7 +96,7 @@ var __webpack_exports__ = {};
             })
         },
         tooltip: function() {
-            if (_VPS.option.advanced.tooltip == 'on') {
+            if (_VPS.option.advanced.tooltip == 'on' || _VPS.option.advanced.tooltip == '1') {
                 this.$element.find('ul.swatches-items-wrapper').each(function(index, el) {
                     $(this).find('li.swatch-item').each(function(index, el) {
                         $(this).mouseover(function() {

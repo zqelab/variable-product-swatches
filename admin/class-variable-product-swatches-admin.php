@@ -90,20 +90,23 @@ class Variable_Product_Swatches_Admin {
 		wp_enqueue_script( $this->plugin->name, plugin_dir_url( __FILE__ ) . 'js/variable-product-swatches-admin' . $suffix . '.js', array( 'jquery' ), $this->plugin->version, true );
 		
 		wp_localize_script( $this->plugin->name, '_VPS', array(
-			'media_title' => esc_html__( 'Choose an Image', 'variable-product-swatches' ),
-			'dialog_title' => esc_html__( 'Add Attribute', 'variable-product-swatches' ),
-			'dialog_save' => esc_html__( 'Add', 'variable-product-swatches' ),
-			'dialog_cancel' => esc_html__( 'Cancel', 'variable-product-swatches' ),
-			'button_title' => esc_html__( 'Use Image', 'variable-product-swatches' ),
-			'add_media' => esc_html__( 'Add Media', 'variable-product-swatches' ),
-			'placeholder_img' => function_exists('wc_placeholder_img_src') ? wc_placeholder_img_src() : null,
-			'ajaxurl' => esc_url( admin_url( 'admin-ajax.php', 'relative' ) ),
-			'nonce' => wp_create_nonce( 'variable_product_swatches_plugin_nonce' ),
+			'media_title' 		=> esc_html__( 'Choose an Image', 'variable-product-swatches' ),
+			'dialog_title' 		=> esc_html__( 'Add Attribute', 'variable-product-swatches' ),
+			'dialog_save' 		=> esc_html__( 'Add', 'variable-product-swatches' ),
+			'dialog_cancel' 	=> esc_html__( 'Cancel', 'variable-product-swatches' ),
+			'button_title' 		=> esc_html__( 'Use Image', 'variable-product-swatches' ),
+			'add_media' 		=> esc_html__( 'Add Media', 'variable-product-swatches' ),
+			'placeholder_img' 	=> function_exists('wc_placeholder_img_src') ? wc_placeholder_img_src() : '',
+			'ajaxurl' 			=> esc_url( admin_url( 'admin-ajax.php', 'relative' ) ),
+			'nonce' 			=> wp_create_nonce( 'variable_product_swatches_plugin_nonce' ),
 		) );
 	}
     
     /**
-     *
+     * callback function of filter - product_attributes_type_selector
+	 * 
+	 * @qc - 21.05.22
+	 * 
      * @since    1.0.0
      */
 	public function product_attributes_type_selector_filter( $selector ) {
@@ -116,19 +119,22 @@ class Variable_Product_Swatches_Admin {
 	}
     
     /**
-     *
+     * admin_init
+	 * 
+     * @qc - 21.05.22
+     * 
      * @since    1.0.0
      */
 	public function add_attribute_meta() {  
-		
 		$fields  = $this->plugin->helper->attribute_meta_fields();
 		$attribute_type_keys = array_keys($fields);
-		$attributes = function_exists('wc_get_attribute_taxonomies') ? wc_get_attribute_taxonomies() : array();
-		
-		if ( $attributes && is_array( $attributes ) ) {
-			foreach ( $attributes as $key => $attribute ) {
-				if (in_array($attribute->attribute_type, $attribute_type_keys)) {
-					new \Zqe\Variable_Product_Swatches_Attribute_Meta( wc_attribute_taxonomy_name( $attribute->attribute_name ),  $fields[$attribute->attribute_type]);
+		if ( function_exists( 'wc_get_attribute_taxonomies' ) ) {
+			$attributes = function_exists('wc_get_attribute_taxonomies') ? wc_get_attribute_taxonomies() : array();
+			if ( $attributes && is_array( $attributes ) ) {
+				foreach ( $attributes as $key => $attribute ) {
+					if (in_array($attribute->attribute_type, $attribute_type_keys)) {
+						new \Zqe\Variable_Product_Swatches_Attribute_Meta( wc_attribute_taxonomy_name( $attribute->attribute_name ),  $fields[$attribute->attribute_type]);
+					}
 				}
 			}
 		}
@@ -359,8 +365,6 @@ class Variable_Product_Swatches_Admin {
 		}
 	}
 
-
-
     /**
      *
      * @since    1.0.0
@@ -376,11 +380,12 @@ class Variable_Product_Swatches_Admin {
 		global $wp_meta_boxes;
 
 		$dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
+		
 		$variable_product_swatches_dashboard_widget_news = [ 
 			'variable_product_swatches_dashboard_widget_news' => $dashboard['variable_product_swatches_dashboard_widget_news']
 		];
-		$wp_meta_boxes['dashboard']['normal']['core'] = array_merge( $variable_product_swatches_dashboard_widget_news, $dashboard ); 
 
+		$wp_meta_boxes['dashboard']['normal']['core'] = array_merge( $variable_product_swatches_dashboard_widget_news, $dashboard ); 
 	}
     /**
      *
@@ -416,7 +421,6 @@ class Variable_Product_Swatches_Admin {
 				What\'s New <span class="screen-reader-text">(opens in a new tab)</span><span aria-hidden="true" class="dashicons dashicons-external"></span>
 			</a>	
 		</p>';
-
 	}
     /**
      *
@@ -439,13 +443,13 @@ class Variable_Product_Swatches_Admin {
 	        }
 	        update_option( 'variable_product_swatches_dashboard_widget_news', $options );
 	    }
-
 	    ?>
-	    <p>
-	        <label><?php _e( 'Number of RSS articles:', 'variable-product-swatches' ); ?>
-	            <input type="text" name="rss_items" value="<?php echo esc_attr( $options['items'] ); ?>" />
-	        </label>
-	    </p>
+		<p>
+			<label>
+				<?php _e( 'Number of RSS articles:', 'variable-product-swatches' ); ?>
+				<input type="text" name="rss_items" value="<?php echo esc_attr( $options['items'] ); ?>" />
+			</label>
+		</p>
 	    <?php
 	}
 }

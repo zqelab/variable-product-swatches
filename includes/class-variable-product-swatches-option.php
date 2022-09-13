@@ -71,6 +71,7 @@ class Variable_Product_Swatches_Option {
 	 * @since    1.0.0
 	 */
     public function get( $key = false ) {
+        
         return $this->core->get_option( $key );
     }
     /**
