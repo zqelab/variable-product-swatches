@@ -51,7 +51,7 @@ if ( ! function_exists( 'vps_fs' ) ) {
                 'type'                => 'plugin',
                 'public_key'          => 'pk_c9403e7faf41a5dfd7e987a93afcd',
                 'is_premium'          => false,
-                'has_addons'          => false,
+                'has_addons'          => true,
                 'has_paid_plans'      => false,
                 'menu'                => array(
                     'slug'           => 'variable-product-swatches',
