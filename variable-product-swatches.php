@@ -43,7 +43,7 @@ if ( ! function_exists( 'variable_product_swatches_fs' ) ) {
 
         if ( ! isset( $variable_product_swatches_fs ) ) {
             // Include Freemius SDK.
-            require_once dirname(__FILE__) . '/freemius/start.php';
+            require_once dirname(__FILE__) . '/includes/freemius/start.php';
 
             $variable_product_swatches_fs = fs_dynamic_init( array(
                 'id'                  => '9729',
