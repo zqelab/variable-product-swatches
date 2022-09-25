@@ -84,29 +84,26 @@ class Variable_Product_Swatches_Admin {
 		 * class.
 		 */
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
+		
 		wp_enqueue_media();
 
-		wp_enqueue_script( $this->plugin->name, plugin_dir_url( __FILE__ ) . 'js/variable-product-swatches-admin' . $suffix . '.js', array( 'jquery' ), $this->plugin->version, true );
+		wp_enqueue_script( $this->plugin->name, plugin_dir_url( __FILE__ ) . 'js/variable-product-swatches-admin' . $suffix . '.js', array( 'jquery' ), $this->plugin->version, false );
 		
 		wp_localize_script( $this->plugin->name, '_VPS', array(
-			'media_title' 		=> esc_html__( 'Choose an Image', 'variable-product-swatches' ),
-			'dialog_title' 		=> esc_html__( 'Add Attribute', 'variable-product-swatches' ),
-			'dialog_save' 		=> esc_html__( 'Add', 'variable-product-swatches' ),
-			'dialog_cancel' 	=> esc_html__( 'Cancel', 'variable-product-swatches' ),
-			'button_title' 		=> esc_html__( 'Use Image', 'variable-product-swatches' ),
-			'add_media' 		=> esc_html__( 'Add Media', 'variable-product-swatches' ),
-			'placeholder_img' 	=> function_exists('wc_placeholder_img_src') ? wc_placeholder_img_src() : '',
-			'ajaxurl' 			=> esc_url( admin_url( 'admin-ajax.php', 'relative' ) ),
-			'nonce' 			=> wp_create_nonce( 'variable_product_swatches_plugin_nonce' ),
+			'media_title' => esc_html__( 'Choose an Image', 'variable-product-swatches' ),
+			'dialog_title' => esc_html__( 'Add Attribute', 'variable-product-swatches' ),
+			'dialog_save' => esc_html__( 'Add', 'variable-product-swatches' ),
+			'dialog_cancel' => esc_html__( 'Cancel', 'variable-product-swatches' ),
+			'button_title' => esc_html__( 'Use Image', 'variable-product-swatches' ),
+			'add_media' => esc_html__( 'Add Media', 'variable-product-swatches' ),
+			'placeholder_img' => function_exists('wc_placeholder_img_src') ? wc_placeholder_img_src() : null,
+			'ajaxurl' => esc_url( admin_url( 'admin-ajax.php', 'relative' ) ),
+			'nonce' => wp_create_nonce( 'wvs_plugin_nonce' ),
 		) );
 	}
     
     /**
-     * callback function of filter - product_attributes_type_selector
-	 * 
-	 * @qc - 21.05.22
-	 * 
+     *
      * @since    1.0.0
      */
 	public function product_attributes_type_selector_filter( $selector ) {
@@ -119,22 +116,19 @@ class Variable_Product_Swatches_Admin {
 	}
     
     /**
-     * admin_init
-	 * 
-     * @qc - 21.05.22
-     * 
+     *
      * @since    1.0.0
      */
 	public function add_attribute_meta() {  
+		
 		$fields  = $this->plugin->helper->attribute_meta_fields();
 		$attribute_type_keys = array_keys($fields);
-		if ( function_exists( 'wc_get_attribute_taxonomies' ) ) {
-			$attributes = function_exists('wc_get_attribute_taxonomies') ? wc_get_attribute_taxonomies() : array();
-			if ( $attributes && is_array( $attributes ) ) {
-				foreach ( $attributes as $key => $attribute ) {
-					if (in_array($attribute->attribute_type, $attribute_type_keys)) {
-						new \Zqe\Variable_Product_Swatches_Attribute_Meta( wc_attribute_taxonomy_name( $attribute->attribute_name ),  $fields[$attribute->attribute_type]);
-					}
+		$attributes = function_exists('wc_get_attribute_taxonomies') ? wc_get_attribute_taxonomies() : array();
+		
+		if ( $attributes && is_array( $attributes ) ) {
+			foreach ( $attributes as $key => $attribute ) {
+				if (in_array($attribute->attribute_type, $attribute_type_keys)) {
+					new \Zqe\Variable_Product_Swatches_Attribute_Meta( wc_attribute_taxonomy_name( $attribute->attribute_name ),  $fields[$attribute->attribute_type]);
 				}
 			}
 		}
@@ -175,7 +169,7 @@ class Variable_Product_Swatches_Admin {
 			$fields = $this->plugin->helper->attribute_meta_fields( $attribute_taxonomy->attribute_type );
 
 			if ( ! empty( $fields ) ) { ?>
-				<button disabled="disabled" class="button fr plus variable_product_swatches_add_new_attribute" data-dialog_title="<?php printf( esc_html__( 'Add new %s', 'variable-product-swatches' ), esc_attr( $attribute_taxonomy->attribute_label ) ) ?>">
+				<button disabled="disabled" class="button fr plus wvs_add_new_attribute" data-dialog_title="<?php printf( esc_html__( 'Add new %s', 'variable-product-swatches' ), esc_attr( $attribute_taxonomy->attribute_label ) ) ?>">
 					<?php esc_html_e( 'Add new', 'variable-product-swatches' ); ?>
 				</button>
 			<?php } else { ?>
@@ -187,11 +181,8 @@ class Variable_Product_Swatches_Admin {
 		}
 	}
     
-
-
-    
     /**
-     *
+     *,,,,,,
      * @since    1.0.0
      */
 	public function settings_menu() {
@@ -201,25 +192,51 @@ class Variable_Product_Swatches_Admin {
 			'manage_categories', 
 			'variable-product-swatches', 
 			array($this, 'settings_page'), 
-		);
+			'data:image/svg+xml;base64,'.base64_encode(
+			'<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="512" height="512" x="0" y="0" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512" xml:space="preserve" class=""><g><path xmlns="http://www.w3.org/2000/svg" d="m265.710938 342-65.710938 53-43.429688 87h345.429688v-140c-22.867188 0-226.871094 0-236.289062 0zm0 0" fill="#ff5284" data-original="#ff5284"></path><path xmlns="http://www.w3.org/2000/svg" d="m328.390625 81.328125c-15.546875 15.550781-143.566406 143.570313-158.390625 158.390625l-22 138.28125 43.609375 38.101562c6.734375-6.734374 225.71875-225.71875 235.769531-235.773437zm0 0" fill="#a0e4f8" data-original="#a0e4f8" class=""></path><path xmlns="http://www.w3.org/2000/svg" d="m30 10v345.429688h140s0-337.949219 0-345.429688zm0 0" fill="#FFE35C" data-original="#FFE35C" class=""></path><path xmlns="http://www.w3.org/2000/svg" d="m190 412c0 49.710938-40.296875 90-90 90-49.710938 0-90-40.289062-90-90 0-49.570312 40.164062-90 90-90 49.757812 0 90 40.351562 90 90zm0 0" fill="#ffffff" data-original="#ffffff"></path><path xmlns="http://www.w3.org/2000/svg" d="m100 362c27.570312 0 50 22.421875 50 50s-22.429688 50-50 50-50-22.421875-50-50 22.429688-50 50-50zm0 0" fill="#425072" data-original="#425072"></path><path xmlns="http://www.w3.org/2000/svg" d="m436 412c5.519531 0 10-4.480469 10-10s-4.480469-10-10-10-10 4.480469-10 10 4.480469 10 10 10zm0 0" fill="#000000" data-original="#000000" class=""></path><path xmlns="http://www.w3.org/2000/svg" d="m100 352c-33.085938 0-60 26.914062-60 60s26.914062 60 60 60 60-26.914062 60-60-26.914062-60-60-60zm0 100c-22.054688 0-40-17.945312-40-40s17.945312-40 40-40 40 17.945312 40 40-17.945312 40-40 40zm0 0" fill="#000000" data-original="#000000" class=""></path><path xmlns="http://www.w3.org/2000/svg" d="m502 332h-212.148438l144.597657-144.597656c3.90625-3.90625 3.90625-10.238282 0-14.144532l-98.988281-99c-1.875-1.875-4.417969-2.929687-7.070313-2.929687s-5.195313 1.054687-7.070313 2.929687l-141.320312 141.320313v-205.578125c0-5.523438-4.476562-10-10-10h-140c-5.523438 0-10 4.476562-10 10v342.015625c-12.914062 17.210937-20 38.367187-20 59.984375 0 55.140625 44.859375 100 100 100 21.617188 0 42.773438-7.085938 59.984375-20h342.015625c5.523438 0 10-4.476562 10-10v-140c0-5.523438-4.476562-10-10-10zm-244.320312-165.816406 84.847656 84.855468-70.707032 70.707032-84.859374-84.847656zm-59.140626 228.84375c-2.683593-15.550782-9.035156-30.347656-18.539062-43.011719v-93.792969l77.675781 77.667969zm-158.539062-163.027344v-106h120v106zm0 20h120v79.976562c-17.125-12.875-38.042969-19.976562-60-19.976562s-42.875 7.101562-60 19.976562zm159.453125 170.398438 60.546875-60.546876v110.148438h-80.011719c10.8125-14.40625 17.601563-31.546875 19.464844-49.601562zm80.546875-70.398438h106v120h-106zm48.390625-256.527344 84.847656 84.855469-56.566406 56.570313-84.847656-84.859376zm-168.390625-75.472656v86h-120v-86zm-140 392c0-44.445312 36.019531-80 80-80 44.546875 0 80 36.167969 80 80 0 43.617188-35.253906 80-80 80-44.113281 0-80-35.886719-80-80zm472 60h-46v-30c0-5.523438-4.476562-10-10-10s-10 4.476562-10 10v30h-20v-120h86zm0 0" fill="#000000" data-original="#000000" class=""></path></g></svg>')
+			);
 	}
-
+    
     /**
      *
      * @since    1.0.0
      */
 	public function settings_init() {
-        $this->plugin->option->core->admin_init();
+		$this->plugin->option->core->admin_init();
 	}
+    
     /**
      *
      * @since    1.0.0
      */
 	public function settings_page() {
-		$this->plugin->option->core->show_forms();
+		echo '<div class="wrap">';
+			echo '<h1>' . get_admin_page_title() . '</h1>';
+			$this->show_navigation();
+			$this->plugin->option->core->show_forms();
+			echo '<a onclick="return confirm(\'Are you sure to reset current settings?\')" href="admin.php?page=variable-product-swatches&action=reset">';
+				echo esc_html( 'Reset all', 'variable-product-swatches' );
+			echo '</a>';
+		echo '</div>';
 	}
     
+    /**
+     *
+     * @since    1.0.0
+     */
+	public function show_navigation() {
 
+		if ( count( $this->plugin->option->get_pages() ) === 1 ) {
+			return;
+		}
+
+		echo '<h2 class="nav-tab-wrapper">';
+		foreach ( $this->plugin->option->get_pages() as $page ) {
+			echo sprintf( '<a href="admin.php?page=variable-product-swatches&tab=%1$s" class="nav-tab %3$s" id="%1$s-tab">%2$s</a>', $page['id'], $page['title'], ( (isset($_GET['tab']) ? $_GET['tab'] : current($this->plugin->option->get_pages())['id']) === $page['id']) ? ' nav-tab-active': '');
+		}
+		echo '</h2>';
+	}
+    
     /**
      *
      * @since    1.0.0
@@ -272,8 +289,6 @@ class Variable_Product_Swatches_Admin {
 		return array_merge( $links, $new_links );
 	}
     
-
-
     /**
      *
      * @since    1.0.0
@@ -380,12 +395,11 @@ class Variable_Product_Swatches_Admin {
 		global $wp_meta_boxes;
 
 		$dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
-		
 		$variable_product_swatches_dashboard_widget_news = [ 
 			'variable_product_swatches_dashboard_widget_news' => $dashboard['variable_product_swatches_dashboard_widget_news']
 		];
-
 		$wp_meta_boxes['dashboard']['normal']['core'] = array_merge( $variable_product_swatches_dashboard_widget_news, $dashboard ); 
+
 	}
     /**
      *
@@ -421,6 +435,7 @@ class Variable_Product_Swatches_Admin {
 				What\'s New <span class="screen-reader-text">(opens in a new tab)</span><span aria-hidden="true" class="dashicons dashicons-external"></span>
 			</a>	
 		</p>';
+
 	}
     /**
      *
@@ -443,13 +458,13 @@ class Variable_Product_Swatches_Admin {
 	        }
 	        update_option( 'variable_product_swatches_dashboard_widget_news', $options );
 	    }
+
 	    ?>
-		<p>
-			<label>
-				<?php _e( 'Number of RSS articles:', 'variable-product-swatches' ); ?>
-				<input type="text" name="rss_items" value="<?php echo esc_attr( $options['items'] ); ?>" />
-			</label>
-		</p>
+	    <p>
+	        <label><?php _e( 'Number of RSS articles:', 'variable-product-swatches' ); ?>
+	            <input type="text" name="rss_items" value="<?php echo esc_attr( $options['items'] ); ?>" />
+	        </label>
+	    </p>
 	    <?php
 	}
 }

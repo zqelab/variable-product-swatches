@@ -66,7 +66,7 @@ class Variable_Product_Swatches_Attribute_Meta {
      * @since    1.0.0
      */
     public function add_form_fields( ) { 
-        $this->generate_add_fields();
+        $this->generate_fields();
     }
     
     /**
@@ -74,7 +74,7 @@ class Variable_Product_Swatches_Attribute_Meta {
      * @since    1.0.0
      */
     public function edit_form_fields( $term ) { 
-        $this->generate_edit_fields($term);
+        $this->generate_fields($term);
     }
     
     /**
@@ -141,19 +141,9 @@ class Variable_Product_Swatches_Attribute_Meta {
 
         if( $attribute->type == 'color' ){
             $value = sanitize_hex_color( get_term_meta( $term_id, 'product_attribute_color', true ) );
-            $is_dual = wc_string_to_bool( get_term_meta( $term_id, 'is_dual_color', true ) );
-            
-            if( $is_dual ) {
-                $secondary_color = sanitize_hex_color( get_term_meta( $term_id, 'secondary_color', true ) );
-                printf( '<div class="variable-product-swatches-meta-preview" style="background: linear-gradient(-45deg, %1$s 0%%, %1$s 50%%, %2$s 50%%, %2$s 100%%);"></div>',
-                    esc_attr( $secondary_color ), 
-                    esc_attr( $value ) 
-                );
-            } else {
-                printf('<div class="variable-product-swatches-meta-preview" style="background-color:%s;"></div>', 
-                    esc_attr( $value ) 
-                );
-            }
+            printf('<div class="variable-product-swatches-meta-preview" style="background-color:%s;"></div>', 
+                esc_attr( $value ) 
+            );
         }
         
         if( $attribute->type =='image' ){
@@ -192,55 +182,23 @@ class Variable_Product_Swatches_Attribute_Meta {
      *
      * @since    1.0.0
      */
-    public function generate_add_fields( $term = false) {
+    public function generate_fields( $term = false) {
+
         if (empty($this->fields)) {
             return;
         }
+
         foreach ($this->fields as $key => $field) {
+
             $field['value'] = $this->get( $term, $field );
 
-            ob_start();
-            wp_nonce_field( basename( __FILE__ ), 'term_meta_text_nonce' );
-            echo ob_get_clean();
-            
             ob_start();
             ?>
-            <div class="form-field <?php echo esc_attr($field['id']) ?><?php echo empty($field['required']) ? '' : 'form-required' ?>">
-                <?php if ( ! ( $field['type'] == 'checkbox' || $field['type'] == 'checkbox' ) ) {  ?>
-                    <label for="<?php echo esc_attr($field['id']) ?>"><?php echo esc_html($field['label']); ?></label>
-                <?php
-                } else { ?>
-                    <?php echo esc_html($field['label']); ?>
-                <?php
-                }
-                echo ob_get_clean();
-
-                $this->fields($field);
-
-                ob_start();
-                ?>
-                <p><?php echo esc_html($field['desc']); ?></p>
-            </div>
-            <?php
+            <?php wp_nonce_field( basename( __FILE__ ), 'term_meta_text_nonce' ); ?>
+            <?php 
             echo ob_get_clean();
-        }
-    }
-    
-    /**
-     *
-     * @since    1.0.0
-     */
-    public function generate_edit_fields( $term = false) {
-        if (empty($this->fields)) {
-            return;
-        }
-        foreach ($this->fields as $key => $field) {
-            $field['value'] = $this->get( $term, $field );
-            
-            ob_start();
-            wp_nonce_field( basename( __FILE__ ), 'term_meta_text_nonce' ); 
-            echo ob_get_clean();
-            
+
+            if ( is_object( $term) ) {
             ob_start();
             ?>
             <tr class="form-field  <?php echo esc_attr($field['id']) ?> <?php echo empty($field['required']) ? '' : 'form-required' ?>">
@@ -253,117 +211,66 @@ class Variable_Product_Swatches_Attribute_Meta {
                 </th>
                 <td>
                 <?php
-                echo ob_get_clean();
+                
+            } else {
+            ?>
+            <div class="form-field <?php echo esc_attr($field['id']) ?><?php echo empty($field['required']) ? '' : 'form-required' ?>">
+                <?php if ( ! ( $field['type'] == 'checkbox' || $field['type'] == 'checkbox' ) ) {  ?>
+                    <label for="<?php echo esc_attr($field['id']) ?>"><?php echo esc_html($field['label']); ?></label>
+                <?php
+                } else { ?>
+                    <?php echo esc_html($field['label']); ?>
+                <?php
+                }
+            }
+            echo ob_get_clean();
+            switch ($field['type']) {
+                case 'color':
+                    echo sprintf( 
+                        '<input type="text" class="zqe-color-picker wp-color-picker" name="%1$s" value="%2$s" />', $field['id'], $field['value']
+                    );
+                    break;
+                case 'image':
+                    ob_start();
+                    ?>
+                    <div class="variable-product-swatches-image-field-wrapper">
+                        <input class="attachment-id" type="hidden" name="<?php echo esc_attr($field['id']) ?>" value="<?php echo esc_attr($field['value']) ?>" />
+                        <div class="image-preview">
+                            <img src="<?php echo esc_url( self::get_img_src( $field['value'] ) ); ?>" />
+                        </div>
+                        <div class="button-wrapper">
+                            <button type="button" class="upload-image-button button button-primary button-small">
+                                <?php esc_html_e( 'Upload', 'variable-product-swatches' ); ?>
+                            </button>
+                            <button style="<?php echo( empty( $field['value'] ) ? 'display:none' : '' ) ?>" type="button" class="remove-image-button button button-danger button-small">
+                                <?php esc_html_e( 'Remove', 'variable-product-swatches' ); ?>
+                            </button>
+                        </div>
+                    </div>
+                    <?php
+                    echo ob_get_clean();
+                    break;
+                default:
+                    break;
 
-                $this->fields($field);
-
-                ob_start();
-                ?>
+            }
+            if ( is_object( $term) ) {
+            ob_start();
+            ?>
                 <p class="description"><?php echo esc_html($field['desc']); ?></p>
                 </td>
             </tr>
             <?php 
+            } else { 
+            ?>
+                <p><?php echo esc_html($field['desc']); ?></p>
+            </div>
+            <?php
+            }
             echo ob_get_clean();
         }
     }
-    /**
-     *
-     * @since    1.0.0
-     */
-    public function fields($field){
-        switch ($field['type']) {
-            case 'text':
-            case 'url':
-                ob_start();
-                $this->text_url($field);
-                echo ob_get_clean();
-                break;
-            case 'color':
-                $this->field_color($field);
-                break;
-            case 'select':
-            case 'select2':
-                ob_start();
-                $this->field_select_select2($field);
-                echo ob_get_clean();
-                break;
-            case 'image':
-                ob_start();
-                $this->field_image($field);
-                echo ob_get_clean();
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     *
-     * @since    1.0.0
-     */
-    public function field_image($field){
-        ?>
-        <div class="variable-product-swatches-image-field-wrapper">
-            <input class="attachment-id" type="hidden" name="<?php echo esc_attr($field['id']) ?>" value="<?php echo esc_attr($field['value']) ?>" />
-            <div class="image-preview">
-                <img src="<?php echo esc_url( self::get_img_src( $field['value'] ) ); ?>" />
-            </div>
-            <div class="button-wrapper">
-                <button type="button" class="upload-image-button button button-primary button-small">
-                    <?php esc_html_e( 'Upload', 'variable-product-swatches' ); ?>
-                </button>
-                <button style="<?php echo( empty( $field['value'] ) ? 'display:none' : '' ) ?>" type="button" class="remove-image-button button button-danger button-small">
-                    <?php esc_html_e( 'Remove', 'variable-product-swatches' ); ?>
-                </button>
-            </div>
-        </div>
-        <?php
-    }
-    /**
-     *
-     * @since    1.0.0
-     */
-    public function field_select_select2($field){
-        $field['options'] = isset( $field['options'] ) ? $field['options'] : array();
-        $field['multiple'] = isset( $field['multiple'] ) ? ' multiple="multiple"' : '';
-        $css_class         = ( $field['type'] == 'select2' ) ? 'variable-product-swatches-selectwoo' : '';
-        ?>
-        <select name="<?php echo $field['id'] ?>" id="<?php echo $field['id'] ?>" class="<?php echo $css_class ?>" <?php echo $field['multiple'] ?>>
-            <?php
-            foreach ( $field['options'] as $key => $option ) {
-                echo '<option' . selected( $field['value'], $key, false ) . ' value="' . $key . '">' . $option . '</option>';
-            }
-            ?>
-        </select>
-        <?php
-    }
-
-    /**
-     *
-     * @since    1.0.0
-     */
-    public function field_color($field){
-        echo sprintf( 
-            '<input type="text" class="zqe-color-picker wp-color-picker" name="%1$s" value="%2$s" />', $field['id'], $field['value']
-        );
-    }
     
-    /**
-     *
-     * @since    1.0.0
-     */
-    public function text_url($field){
-        ?>
-        <input name="<?php echo $field['id'] ?>" id="<?php echo $field['id'] ?>"
-            type="<?php echo $field['type'] ?>"
-            value="<?php echo $field['value'] ?>"
-            >
-        <?php
-    }
-
-
-
-
     /**
      *
      * @since    1.0.0

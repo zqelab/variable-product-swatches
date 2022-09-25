@@ -114,9 +114,10 @@ class Variable_Product_Swatches {
 	 * @access   private
 	 */
 	private function load_dependencies() {
+
+		$this->option = new \Zqe\Variable_Product_Swatches_Option();
 		$this->helper = new \Zqe\Variable_Product_Swatches_Helper();
 		$this->loader = new \Zqe\Variable_Product_Swatches_Loader();
-		$this->option = new \Zqe\Variable_Product_Swatches_Option();
 	}
 
 	/**
@@ -157,9 +158,7 @@ class Variable_Product_Swatches {
 		//$this->loader->add_filter( 'plugin_action_links_' . $this->get_basename(), $plugin_admin, 'plugin_action_links' );
 
         $this->loader->add_action( 'admin_menu', $plugin_admin, 'settings_menu' );
-        
         $this->loader->add_action( 'admin_init', $plugin_admin, 'settings_init' );
-
 		$this->loader->add_filter( 'product_attributes_type_selector', $plugin_admin, 'product_attributes_type_selector_filter' );
         $this->loader->add_action( 'admin_init', $plugin_admin, 'add_attribute_meta' );
 		$this->loader->add_action( 'woocommerce_product_option_terms', $plugin_admin, 'woocommerce_product_option_terms_action', 20, 3 );
@@ -184,7 +183,7 @@ class Variable_Product_Swatches {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 		$this->loader->add_filter( 'body_class',  $plugin_public, 'body_class' );
-		$this->loader->add_filter( 'woocommerce_dropdown_variation_attribute_options_html', $plugin_public, 'woocommerce_dropdown_variation_attribute_options_html', 200, 2 );
+		$this->loader->add_filter( 'woocommerce_dropdown_variation_attribute_options_html', $plugin_public, 'woocommerce_dropdown_variation_attribute_options_html_filter', 200, 2 );
 		$this->loader->add_filter( 'woocommerce_variation_is_active', $plugin_public, 'woocommerce_variation_is_active_filter', 10, 2 );
 		$this->loader->add_filter( 'woocommerce_available_variation', $plugin_public, 'woocommerce_available_variation_filter', 10, 3 );
 		$this->loader->add_filter( 'woocommerce_ajax_variation_threshold', $plugin_public, 'woocommerce_ajax_variation_threshold_filter' );

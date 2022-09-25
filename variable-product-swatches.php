@@ -36,22 +36,22 @@ if ( ! defined( 'WPINC' ) ) {
  */
 include dirname(__FILE__) . '/vendor/autoload.php';
 
-if ( ! function_exists( 'variable_product_swatches_fs' ) ) {
+if ( ! function_exists( 'vps_fs' ) ) {
     // Create a helper function for easy SDK access.
-    function variable_product_swatches_fs() {
-        global $variable_product_swatches_fs;
+    function vps_fs() {
+        global $vps_fs;
 
-        if ( ! isset( $variable_product_swatches_fs ) ) {
+        if ( ! isset( $vps_fs ) ) {
             // Include Freemius SDK.
             require_once dirname(__FILE__) . '/includes/freemius/start.php';
 
-            $variable_product_swatches_fs = fs_dynamic_init( array(
+            $vps_fs = fs_dynamic_init( array(
                 'id'                  => '9729',
                 'slug'                => 'variable-product-swatches',
                 'type'                => 'plugin',
                 'public_key'          => 'pk_c9403e7faf41a5dfd7e987a93afcd',
                 'is_premium'          => false,
-                'has_addons'          => true,
+                'has_addons'          => false,
                 'has_paid_plans'      => false,
                 'menu'                => array(
                     'slug'           => 'variable-product-swatches',
@@ -59,13 +59,13 @@ if ( ! function_exists( 'variable_product_swatches_fs' ) ) {
             ) );
         }
 
-        return $variable_product_swatches_fs;
+        return $vps_fs;
     }
 
     // Init Freemius.
-    variable_product_swatches_fs();
+    vps_fs();
     // Signal that SDK was initiated.
-    do_action( 'variable_product_swatches_fs_loaded' );
+    do_action( 'vps_fs_loaded' );
 }
 
 /**
@@ -106,7 +106,18 @@ register_deactivation_hook( __FILE__, 'deactivate_variable_product_swatches' );
  *
  * @since    1.0.0
  */
-add_action( 'plugins_loaded', function () {
-    $plugin = new \Zqe\Variable_Product_Swatches();
-    $plugin->run();
-}, 25 );
+function run_variable_product_swatches() {
+
+	$plugin = new \Zqe\Variable_Product_Swatches();
+	$plugin->run();
+
+}
+add_action( 'plugins_loaded', 'run_variable_product_swatches', 25 );
+
+
+
+
+
+
+
+
