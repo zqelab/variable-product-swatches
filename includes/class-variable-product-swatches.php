@@ -183,7 +183,9 @@ class Variable_Product_Swatches {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 		$this->loader->add_filter( 'body_class',  $plugin_public, 'body_class' );
+
 		$this->loader->add_filter( 'woocommerce_dropdown_variation_attribute_options_html', $plugin_public, 'woocommerce_dropdown_variation_attribute_options_html_filter', 200, 2 );
+		
 		$this->loader->add_filter( 'woocommerce_variation_is_active', $plugin_public, 'woocommerce_variation_is_active_filter', 10, 2 );
 		$this->loader->add_filter( 'woocommerce_available_variation', $plugin_public, 'woocommerce_available_variation_filter', 10, 3 );
 		$this->loader->add_filter( 'woocommerce_ajax_variation_threshold', $plugin_public, 'woocommerce_ajax_variation_threshold_filter' );

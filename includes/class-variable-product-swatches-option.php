@@ -60,10 +60,6 @@ class Variable_Product_Swatches_Option {
 	 * @since    1.0.0
 	 */
     public function get( $key = false ) {
-
-
-
-
         return $this->core->get_option($key);
     }
     
@@ -72,7 +68,7 @@ class Variable_Product_Swatches_Option {
 	 * @since    1.0.0
 	 */
     public function get_pages() {
-        return array(
+        return apply_filters( 'variable_product_swatches_option', array(
             apply_filters(
                 'vps_option_basic_group',
                 array(
@@ -344,7 +340,7 @@ class Variable_Product_Swatches_Option {
                     )
                 )
             )
-        );
+        ) );
     }
 
     /**

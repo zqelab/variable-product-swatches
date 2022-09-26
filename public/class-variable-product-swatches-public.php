@@ -122,6 +122,8 @@ class Variable_Product_Swatches_Public {
      */
 	public function body_class( $classes ) {
 
+		$classes[] = 'variable-product-swatches-body';
+
 		$show_selected_attribute = $this->plugin->option->get('show_selected_variation');
 		if ( $show_selected_attribute ) {
 			$classes[] = 'variable-product-swatches-show-selected-attribute';
@@ -139,7 +141,7 @@ class Variable_Product_Swatches_Public {
 
 		$attribute_behavior = $this->plugin->option->get('attribute_behavior');
 		if ( $attribute_behavior ) {
-			$classes[] = 'variable-product-swatches-' . esc_attr($attribute_behavior);
+			$classes[] = 'variable-product-swatches-' . esc_attr($attribute_behavior); //  -blur-cross // -blur-no-cross // -hide
 		}
 
 		return $classes;
@@ -262,19 +264,19 @@ class Variable_Product_Swatches_Public {
 		$classes[] = 'swatches-items-wrapper-'.$type;
 
 		if( $type == 'image' ) {
-			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('image_style');
+			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('image_style'); // rounded // squared
 		}
 
 		if( $type == 'color' ) {
-			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('color_style');
+			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('color_style'); // rounded // squared 
 		}
 
 		if( $type == 'radio' ) {
-			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('radio_style');
+			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('radio_style'); // rounded // squared 
 		}
 
 		if( $type == 'button' ) {
-			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('button_style');
+			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('button_style'); // rounded // squared 
 		}
 
 		$attribute = $args['attribute'];
@@ -343,6 +345,8 @@ class Variable_Product_Swatches_Public {
 		$variation_stock_count = 0;
 		$variations    = $product->get_available_variations();
 		
+		$managing_stock = $product->managing_stock();
+
 		$stockcount = $this->plugin->option->get('stockcount');
 		$get_variations = count( $product->get_children() ) <= apply_filters( 'woocommerce_ajax_variation_threshold', 30, $product );
 		$available_variations = $get_variations ? $product->get_available_variations() : array();
@@ -384,7 +388,7 @@ class Variable_Product_Swatches_Public {
 				break;
 			case 'radio':
 				$html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s"></span><span class="swatch-item-span-label">%2$s</span>', esc_attr( $type ), esc_html( $option ) );
-				if( $available_variations && $stockcount) {
+				if( $available_variations && $stockcount && $managing_stock ) {
 					$html .= sprintf( '<span class="swatch-item-stock-count">%1$s left</span>', $variation_stock_count );
 				}
 				break;
@@ -392,7 +396,7 @@ class Variable_Product_Swatches_Public {
 				break;
 		}
 		$html .= sprintf( '</div>');
-		if( $available_variations && $stockcount && $type != 'radio') {
+		if( $available_variations && $stockcount && $managing_stock && $type != 'radio') {
 			$html .= sprintf( '<span class="swatch-item-stock-count">%1$s left</span>', $variation_stock_count );
 		}
 		$html .= sprintf( '</li>');
