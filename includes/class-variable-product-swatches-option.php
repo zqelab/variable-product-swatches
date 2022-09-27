@@ -83,18 +83,19 @@ class Variable_Product_Swatches_Option {
                             'fields' => array(
                                 array(
                                     'id'                => 'button_default',
-                                    'title'             => __( 'Button as Default', 'wedevs' ),
-                                    'desc'              => __( 'Convert default dropdowns to button', 'wedevs' ),
+                                    'title'             => __( 'Button as Default', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Convert default dropdowns to button', 'variable-product-swatches' ),
                                     'type'              => 'checkbox',
                                     'default'           => 'on',
                                 ),
                                 array(
                                     'id'                => 'button_style',
-                                    'title'             => __( 'Button Shape', 'wedevs' ),
-                                    'desc'              => __( 'Attribute shape for button.', 'wedevs' ),
+                                    'title'             => __( 'Button Shape', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Attribute shape for button.', 'variable-product-swatches' ),
                                     'type'              => 'radio',
                                     'default'           => 'rounded',
                                     'options'           => array(
+                                        'circle'            => 'Circle Shape',
                                         'rounded'           => 'Rounded Shape',
                                         'squared'           => 'Squared Shape'
                                     )
@@ -108,15 +109,15 @@ class Variable_Product_Swatches_Option {
                             'fields' => array(
                                 array(
                                     'id'                => 'image_default',
-                                    'title'             => __( 'Image as Default ', 'wedevs' ),
-                                    'desc'              => __( 'Convert default dropdowns to image if variation has an image.', 'wedevs' ),
+                                    'title'             => __( 'Image as Default ', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Convert default dropdowns to image if variation has an image.', 'variable-product-swatches' ),
                                     'type'              => 'checkbox',
                                     'default'           => '',
                                 ),
 
                                 array(
                                     'id'                => 'image_default_attribute',
-                                    'title'             => __( 'Default Image Attribute', 'wedevs' ),
+                                    'title'             => __( 'Default Image Attribute', 'variable-product-swatches' ),
                                     'type'              => 'select',
                                     'default'           => '__first',
                                     'options'           => array(
@@ -128,7 +129,7 @@ class Variable_Product_Swatches_Option {
                                 ),
                                 array(
                                     'id'                => 'image_swatch_size',
-                                    'title'             => __( 'Image Swatch Size ', 'wedevs' ),
+                                    'title'             => __( 'Image Swatch Size ', 'variable-product-swatches' ),
                                     'type'              => 'select',
                                     'default'           => 'thumbnail',
                                     'options'           => $this->get_all_image_sizes()
@@ -136,8 +137,8 @@ class Variable_Product_Swatches_Option {
 
                                 array(
                                     'id'                => 'image_swatch_width',
-                                    'title'             => __( 'Swatch Width', 'wedevs' ),
-                                    'desc'              => __( 'Swatch width', 'wedevs' ),
+                                    'title'             => __( 'Swatch Width', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Swatch width', 'variable-product-swatches' ),
                                     'type'              => 'number',
                                     'size'              => 'small',
                                     'default'           => '50',
@@ -145,8 +146,8 @@ class Variable_Product_Swatches_Option {
                                 ),
                                 array(
                                     'id'                => 'image_swatch_height',
-                                    'title'             => __( 'Swatch Height', 'wedevs' ),
-                                    'desc'              => __( 'Swatch height', 'wedevs' ),
+                                    'title'             => __( 'Swatch Height', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Swatch height', 'variable-product-swatches' ),
                                     'type'              => 'number',
                                     'size'              => 'small',
                                     'default'           => '50',
@@ -154,19 +155,20 @@ class Variable_Product_Swatches_Option {
                                 ),
                                 array(
                                     'id'                => 'image_style',
-                                    'title'             => __( 'Color Shape', 'wedevs' ),
-                                    'desc'              => __( 'Attribute shape.', 'wedevs' ),
+                                    'title'             => __( 'Image Shape', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Attribute shape.', 'variable-product-swatches' ),
                                     'type'              => 'radio',
                                     'default'           => 'rounded',
                                     'options'           => array(
+                                        'circle'            => 'Circle Shape',
                                         'rounded'           => 'Rounded Shape',
                                         'squared'           => 'Squared Shape'
                                     )
                                 ),
                                 array(
                                     'id'                => 'image_swatch_show_label',
-                                    'title'             => __( 'Show Label', 'wedevs' ),
-                                    'desc'              => __( 'Show swatch label.', 'wedevs' ),
+                                    'title'             => __( 'Show Label', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Show swatch label.', 'variable-product-swatches' ),
                                     'type'              => 'checkbox',
                                     'default'           => '',
                                 )
@@ -179,8 +181,8 @@ class Variable_Product_Swatches_Option {
                             'fields' => array(
                                 array(
                                     'id'                => 'color_swatch_width',
-                                    'title'             => __( 'Swatch Width', 'wedevs' ),
-                                    'desc'              => __( 'Swatch width', 'wedevs' ),
+                                    'title'             => __( 'Swatch Width', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Swatch width', 'variable-product-swatches' ),
                                     'type'              => 'number',
                                     'size'              => 'small',
                                     'default'           => '30',
@@ -188,8 +190,8 @@ class Variable_Product_Swatches_Option {
                                 ),
                                 array(
                                     'id'                => 'color_swatch_height',
-                                    'title'             => __( 'Swatch Height', 'wedevs' ),
-                                    'desc'              => __( 'Swatch height.', 'wedevs' ),
+                                    'title'             => __( 'Swatch Height', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Swatch height.', 'variable-product-swatches' ),
                                     'type'              => 'number',
                                     'size'              => 'small',
                                     'default'           => '30',
@@ -197,19 +199,20 @@ class Variable_Product_Swatches_Option {
                                 ),
                                 array(
                                     'id'                => 'color_style',
-                                    'title'             => __( 'Swatch Shape', 'wedevs' ),
-                                    'desc'              => __( 'Attribute shape.', 'wedevs' ),
+                                    'title'             => __( 'Color Shape', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Attribute shape.', 'variable-product-swatches' ),
                                     'type'              => 'radio',
                                     'default'           => 'rounded',
                                     'options' => array(
+                                        'circle'    => 'Circle Shape',
                                         'rounded'  => 'Rounded Shape',
                                         'squared'  => 'Squared Shape'
                                     )
                                 ),
                                 array(
                                     'id'                => 'color_swatch_show_label',
-                                    'title'             => __( 'Show Label', 'wedevs' ),
-                                    'desc'              => __( 'Show swatch label.', 'wedevs' ),
+                                    'title'             => __( 'Show Label', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Show swatch label.', 'variable-product-swatches' ),
                                     'type'              => 'checkbox',
                                     'default'           => '',
                                 )
@@ -223,11 +226,12 @@ class Variable_Product_Swatches_Option {
                             'fields' => array(
                                 array(
                                     'id'                => 'radio_style',
-                                    'title'             => __( 'Swatch Shape', 'wedevs' ),
-                                    'desc'              => __( 'Attribute shape.', 'wedevs' ),
+                                    'title'             => __( 'Radio Shape', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Attribute shape.', 'variable-product-swatches' ),
                                     'type'              => 'radio',
                                     'default'           => 'rounded',
                                     'options'           => array(
+                                        'circle'            => 'Circle Shape',
                                         'rounded'           => 'Rounded Shape',
                                         'squared'           => 'Squared Shape'
                                     )
@@ -253,29 +257,29 @@ class Variable_Product_Swatches_Option {
                             'fields' => array(
                                 array(
                                     'id'                => 'clickable_disabled_variation',
-                                    'title'             => __( 'Clickable Disabled Variation', 'wedevs' ),
-                                    'desc'              => __( 'Enable click disable variation label beside the attribute label.', 'wedevs' ),
+                                    'title'             => __( 'Clickable Disabled Variation', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Enable click disable variation label beside the attribute label.', 'variable-product-swatches' ),
                                     'type'              => 'checkbox',
                                     'default'           => '',
                                 ),
                                 array(
                                     'id'                => 'show_selected_variation',
-                                    'title'             => __( 'Show Selected Variation', 'wedevs' ),
-                                    'desc'              => __( 'Show selected variation label beside the attribute label.', 'wedevs' ),
+                                    'title'             => __( 'Show Selected Variation', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Show selected variation label beside the attribute label.', 'variable-product-swatches' ),
                                     'type'              => 'checkbox',
                                     'default'           => '',
                                 ),
                                 array(
                                     'id'                => 'label_separator',
-                                    'title'             => __( 'Label Separator', 'wedevs' ),
-                                    'desc'              => __( 'Attribute and variation label separator', 'wedevs' ),
+                                    'title'             => __( 'Label Separator', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Attribute and variation label separator', 'variable-product-swatches' ),
                                     'type'              => 'text',
                                     'default'           => ':',
                                 ),
                                 array(
                                     'id'                => 'clear_on_reselect',
-                                    'title'             => __( 'Clear Selected Variation', 'wedevs' ),
-                                    'desc'              => __( 'Clear selected variation on click.', 'wedevs' ),
+                                    'title'             => __( 'Clear Selected Variation', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Clear selected variation on click.', 'variable-product-swatches' ),
                                     'type'              => 'checkbox',
                                     'default'           => '',
                                 ),
@@ -283,15 +287,15 @@ class Variable_Product_Swatches_Option {
 
                                 array(
                                     'id'                => 'tooltip',
-                                    'title'             => __( 'Enable Tooltip', 'wedevs' ),
-                                    'desc'              => __( 'Enable tooltip on each product attribute.', 'wedevs' ),
+                                    'title'             => __( 'Enable Tooltip', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Enable tooltip on each product attribute.', 'variable-product-swatches' ),
                                     'type'              => 'checkbox',
                                     'default'           => 'on',
                                 ),
                                 array(
                                     'id'                => 'tooltip_placement',
-                                    'title'             => __( 'Tooltip Placement', 'wedevs' ),
-                                    'desc'              => __( 'Tooltip placement position. Applicable for image and color', 'wedevs' ),
+                                    'title'             => __( 'Tooltip Placement', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Tooltip placement position. Applicable for image and color', 'variable-product-swatches' ),
                                     'type'              => 'radio',
                                     'default'           => 'top',
                                     'options'           => array(
@@ -309,8 +313,8 @@ class Variable_Product_Swatches_Option {
                             'fields' => array(
                                 array(
                                     'id'                => 'threshold',
-                                    'title'             => __( 'Ajax Variation Threshold', 'wedevs' ),
-                                    'desc'              => __( 'Control the number of enable ajax variation threshold', 'wedevs' ),
+                                    'title'             => __( 'Ajax Variation Threshold', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Control the number of enable ajax variation threshold', 'variable-product-swatches' ),
                                     'type'              => 'number',
                                     'default'           => '30',
                                 ),
@@ -328,8 +332,8 @@ class Variable_Product_Swatches_Option {
                                 ),
                                 array(
                                     'id'                => 'stockcount',
-                                    'title'             => __( 'Show Variation Stock', 'wedevs' ),
-                                    'desc'              => __( 'Show each variation stock and update according selected combination', 'wedevs' ),
+                                    'title'             => __( 'Show Variation Stock', 'variable-product-swatches' ),
+                                    'desc'              => __( 'Show each variation stock and update according selected combination', 'variable-product-swatches' ),
                                     'type'              => 'checkbox',
                                     'default'           => '',
                                 ),

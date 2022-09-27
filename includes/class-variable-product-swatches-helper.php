@@ -161,4 +161,25 @@ class Variable_Product_Swatches_Helper {
 
         return trim( $inline_css );
     }
+
+    /**
+     *
+     * @since    1.0.0
+     */
+    public function get_img_src($thumbnail_id = false) {
+        if (!empty($thumbnail_id)) {
+            $image = wp_get_attachment_thumb_url($thumbnail_id);
+        } else {
+            $image = $this->placeholder_img_src();
+        }
+        return $image;
+    }
+
+    /**
+     *
+     * @since    1.0.0
+     */
+    public function placeholder_img_src() {
+        return function_exists('wc_placeholder_img_src') ? wc_placeholder_img_src() : null;
+    }
 }

@@ -100,11 +100,11 @@ class Variable_Product_Swatches_Public {
 		ob_start();
 		?>
 		<style type="text/css">
-			ul.swatches-items-wrapper>li.swatch-item.swatch-item-image .swatch-item-span {
+			body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item.swatch-item-image .swatch-item-wrapper .swatch-item-span {
 		        width  : <?php echo esc_html($image_swatch_width); ?>px;
 		        height : <?php echo esc_html($image_swatch_height); ?>px;
 		    }
-		    ul.swatches-items-wrapper>li.swatch-item.swatch-item-color .swatch-item-span {
+		    body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item.swatch-item-color .swatch-item-wrapper .swatch-item-span {
 		        width  : <?php echo esc_html($color_swatch_width); ?>px;
 		        height : <?php echo esc_html($color_swatch_height); ?>px;
 		    }

@@ -8,11 +8,11 @@ body.variable-product-swatches-body ul.swatches-items-wrapper {
   display: flex;
   flex-wrap: wrap;
   align-content: center;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
 }
 body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item {
-  margin: 0 5px;
+  margin-right: 10px;
   position: relative;
   padding-bottom: 10px;
 }
@@ -41,7 +41,7 @@ body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item .sw
   padding: 0 10px;
 }
 body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item:hover .swatch-item-wrapper {
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.5);
 }
 body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item .swatch-item-stock-count {
   font-size: 11px;
@@ -94,6 +94,7 @@ body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item .sw
 }
 body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item img {
   display: block;
+  width: 100%;
 }
 body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item.swatch-item-disabled {
   pointer-events: none;
@@ -128,6 +129,10 @@ body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item.swa
   width: 34px;
   height: 34px;
 }
+body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item.swatch-item-image .swatch-item-wrapper .swatch-item-span {
+  width: 40px;
+  height: 40px;
+}
 body.variable-product-swatches-body ul.swatches-items-wrapper.swatches-items-wrapper-radio {
   display: block;
 }
@@ -158,9 +163,15 @@ body.variable-product-swatches-body ul.swatches-items-wrapper.swatches-items-wra
   box-shadow: none;
 }
 body.variable-product-swatches-body ul.swatches-items-wrapper.swatches-items-wrapper-rounded li.swatch-item .swatch-item-wrapper {
-  border-radius: 150px;
+  border-radius: 4px;
 }
 body.variable-product-swatches-body ul.swatches-items-wrapper.swatches-items-wrapper-rounded li.swatch-item .swatch-item-span {
+  border-radius: 4px;
+}
+body.variable-product-swatches-body ul.swatches-items-wrapper.swatches-items-wrapper-circle li.swatch-item .swatch-item-wrapper {
+  border-radius: 150px;
+}
+body.variable-product-swatches-body ul.swatches-items-wrapper.swatches-items-wrapper-circle li.swatch-item .swatch-item-span {
   border-radius: 150px;
 }
 body.variable-product-swatches-body.variable-product-swatches-clickable-disabled-attribute ul.swatches-items-wrapper > li.swatch-item.swatch-item-disabled {
@@ -174,6 +185,9 @@ body.variable-product-swatches-body.variable-product-swatches-hide ul.swatches-i
 }
 body.variable-product-swatches-body.variable-product-swatches-show-selected-attribute .variations td {
   display: block;
+}
+body.variable-product-swatches-body.variable-product-swatches-show-selected-attribute .variations tr {
+  margin-bottom: 0px;
 }
 body.variable-product-swatches-body.variable-product-swatches-show-selected-attribute .variations tr:not(:last-child) td {
   border-bottom: 0px;
