@@ -140,15 +140,15 @@ console.log(_VPS.option)
                 $(this).find('li.swatch-item').each(function(index, el) {
 
                     var placement = _VPS.option.advanced.tooltip_placement ? _VPS.option.advanced.tooltip_placement : 'top';
-                    var title = $(this).data('title');
+                    var tooltip = $(this).data('tooltip');
                     $(this).mouseover(function() {
                         if($(this).hasClass('swatch-item-radio')){
                             if ($(this).find('.swatch-item-span-radio').find('.swatch-item-tooltip').length === 0) {
-                                $(this).find('.swatch-item-span-radio').append('<div class="swatch-item-tooltip swatch-item-tooltip-' + placement + '">' + title + '</div>');
+                                $(this).find('.swatch-item-span-radio').append('<div class="swatch-item-tooltip swatch-item-tooltip-' + placement + '">' + tooltip + '</div>');
                             }  
                         } else {
                             if ($(this).find('.swatch-item-tooltip').length === 0) {
-                                $(this).append('<div class="swatch-item-tooltip swatch-item-tooltip-' + placement + '">' + title + '</div>');
+                                $(this).append('<div class="swatch-item-tooltip swatch-item-tooltip-' + placement + '">' + tooltip + '</div>');
                             }
                         }
                     })

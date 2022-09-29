@@ -192,6 +192,17 @@ class Variable_Product_Swatches_Attribute_Meta {
 
             $field['value'] = $this->get( $term, $field );
 
+            $field['id'] = esc_html( $field['id'] );
+
+            $field['size']        = isset( $field['size'] ) ? $field['size'] : '40';
+            $field['required']    = ( isset( $field['required'] ) and $field['required'] == true ) ? ' aria-required="true"' : '';
+            $field['placeholder'] = ( isset( $field['placeholder'] ) ) ? ' placeholder="' . $field['placeholder'] . '" data-placeholder="' . $field['placeholder'] . '"' : '';
+            $field['desc']        = ( isset( $field['desc'] ) ) ? $field['desc'] : '';
+
+            $field['dependency']       = ( isset( $field['dependency'] ) ) ? $field['dependency'] : array();
+
+            $depends = empty( $field['dependency'] ) ? '' : "data-vpsdepends='" . wp_json_encode( $field['dependency'] ) . "'";
+
             ob_start();
             ?>
             <?php wp_nonce_field( basename( __FILE__ ), 'term_meta_text_nonce' ); ?>
@@ -201,7 +212,7 @@ class Variable_Product_Swatches_Attribute_Meta {
             if ( is_object( $term) ) {
             ob_start();
             ?>
-            <tr class="form-field  <?php echo esc_attr($field['id']) ?> <?php echo empty($field['required']) ? '' : 'form-required' ?>">
+            <tr <?php echo $depends ?> class="form-field  <?php echo esc_attr($field['id']) ?> <?php echo empty($field['required']) ? '' : 'form-required' ?>">
                 <th scope="row">
                     <?php if ( ! ( $field['type'] == 'checkbox' || $field['type'] == 'checkbox' ) ) { ?>
                     <label for="<?php echo esc_attr($field['id']) ?>"><?php echo esc_html($field['label']); ?></label>
@@ -214,7 +225,7 @@ class Variable_Product_Swatches_Attribute_Meta {
                 
             } else {
             ?>
-            <div class="form-field <?php echo esc_attr($field['id']) ?><?php echo empty($field['required']) ? '' : 'form-required' ?>">
+            <div <?php echo $depends ?> class="form-field <?php echo esc_attr($field['id']) ?><?php echo empty($field['required']) ? '' : 'form-required' ?>">
                 <?php if ( ! ( $field['type'] == 'checkbox' || $field['type'] == 'checkbox' ) ) {  ?>
                     <label for="<?php echo esc_attr($field['id']) ?>"><?php echo esc_html($field['label']); ?></label>
                 <?php
@@ -225,6 +236,33 @@ class Variable_Product_Swatches_Attribute_Meta {
             }
             echo ob_get_clean();
             switch ($field['type']) {
+                case 'text':
+                    ob_start();
+                    ?>
+                    <input name="<?php echo $field['id'] ?>" 
+                            id="<?php echo $field['id'] ?>"
+                            type="<?php echo $field['type'] ?>"
+                            value="<?php echo $field['value'] ?>">
+                    <?php
+                    echo ob_get_clean();
+                    break;
+                case 'select':
+                    $field['options'] = isset( $field['options'] ) ? $field['options'] : array();
+                    $field['multiple'] = isset( $field['multiple'] ) ? ' multiple="multiple"' : '';
+
+                    ob_start();
+                    ?>
+                    <select name="<?php echo $field['id'] ?>" id="<?php echo $field['id'] ?>" <?php echo $field['multiple'] ?>>
+                        <?php
+                        foreach ( $field['options'] as $key => $option ) {
+                            echo '<option' . selected( $field['value'], $key, false ) . ' value="' . $key . '">' . $option . '</option>';
+                        }
+                        ?>
+                    </select>
+                    <?php
+                    echo ob_get_clean();
+                    break;
+
                 case 'color':
                     echo sprintf( 
                         '<input type="text" class="zqe-color-picker wp-color-picker" name="%1$s" value="%2$s" />', $field['id'], $field['value']

@@ -120,6 +120,35 @@ class Variable_Product_Swatches_Public {
      *
      * @since    1.0.0
      */
+	public function woocommerce_variation_is_active_filter($active, $variation) {
+		if ( ! $variation->is_in_stock() ) {
+			return false;
+		}
+		return $active;
+	}
+    
+    /**
+     *
+     * @since    1.0.0
+     */
+	public function woocommerce_available_variation_filter($data, $obj, $variation) {
+		$data['stock_quantity'] = $variation->get_stock_quantity();
+		return $data;
+	}
+
+   
+    /**
+     *
+     * @since    1.0.0
+     */
+	public function woocommerce_ajax_variation_threshold_filter() {
+		return $this->plugin->option->get('threshold') ? $this->plugin->option->get('threshold') : 30 ;
+	}
+
+    /**
+     *
+     * @since    1.0.0
+     */
 	public function body_class( $classes ) {
 
 		$classes[] = 'variable-product-swatches-body';
@@ -152,31 +181,50 @@ class Variable_Product_Swatches_Public {
      * @since    1.0.0
      */
 	public function woocommerce_dropdown_variation_attribute_options_html_filter($html, $args) {
+		
+		if ( apply_filters( 'default_variable_product_swatches_variation_attribute_options_html', false, $args, $html ) ) {
+			return $html;
+		}
 
+		// WooCommerce Product Bundle Fixing
 		if ( isset( $_POST['action'] ) && $_POST['action'] === 'woocommerce_configure_bundle_order_item' ) {
 			return $html;
 		}
 
+		// is image default ?
 		$image_default = $this->plugin->option->get( 'image_default' );
+		
+		// is button default ?
 		$button_default = $this->plugin->option->get( 'button_default' );
 
+		// check if product don't have custom settings for swatches
 		if ( apply_filters( 'variable_product_swatches_no_individual_settings', true, $args, $image_default, $button_default ) ) {
+
+			// Reset defult attribute_type to select.
 			$args['attribute_type'] = 'select';
+
+			// if $args['attribute'] exists on taxonomy and not as just custom attribute.
+			// and get custom attribute_type.
 			if ( taxonomy_exists( $args['attribute'] ) ) {
 				$args['attribute_type'] = wc_get_attribute( wc_attribute_taxonomy_id_by_name( $args['attribute'] ) )->type;
 			}
+
+			// if attribute_type not in variable product swatches attributes_types.
+			// set that as default variable product swatches attributes_type
 			if ( ! in_array($args['attribute_type'], array_keys( $this->plugin->helper->attributes_types() ) ) ) {
 				$args['attribute_type_default'] = true;
+
+				// if image is default attributes_type, selected attribute will be assigned with image
 				if ( $image_default ) {
-
 					$default_image_attribute =  $this->plugin->option->get( 'default_image_attribute' );
-
 					$assigned = $this->plugin->helper->assigned_image( $args, $default_image_attribute );
 					if ( ! empty( $assigned ) ) {
 						$args['assigned'] = $assigned;
 						$args['attribute_type'] = 'image';
 					}
 				}
+
+				// if button is default attributes_type
 				if ( $button_default ) {
 					if ( ! isset( $args['assigned'] ) ) {
 						$args['attribute_type'] = 'button';
@@ -184,15 +232,18 @@ class Variable_Product_Swatches_Public {
 				}
 			}
 
+			// check if $args['attribute_type'] match with variable product swatches attribute_type 
 			if ( in_array( $args['attribute_type'], array_keys( $this->plugin->helper->attributes_types() ) ) ) {
 				ob_start();
 				$this->variation_attribute_options( $args );
-				return ob_get_clean();
+				$html = ob_get_clean();
 			} else {
 				return $html;
 			}
-		}
-		return $html;
+		} 
+
+		return apply_filters( 'variable_product_swatches_build_swatches_item_html', $html, $args, $this->plugin );
+
 	}
     
     /**
@@ -200,7 +251,6 @@ class Variable_Product_Swatches_Public {
      * @since    1.0.0
      */
 	public function variation_attribute_options($args) {
-		
 		$args = wp_parse_args(apply_filters('woocommerce_dropdown_variation_attribute_options_args', $args), array(
 			'options' => false,
 			'attribute' => false,
@@ -211,7 +261,6 @@ class Variable_Product_Swatches_Public {
 			'class' => '',
 			'show_option_none' => __('Choose an option', 'woocommerce'),
 		));
-		
 		$type = $args['attribute_type'];
 		$options = $args['options'];
 		$product = $args['product'];
@@ -420,32 +469,6 @@ class Variable_Product_Swatches_Public {
 
 		return  sprintf('<img class="swatch-item-image" alt="%1$s" src="%2$s" width="%3$s" height="%4$s" />', esc_attr($option), esc_url($image[0]),esc_attr($image[1]),esc_attr($image[2]));
 	}
-    
-    /**
-     *
-     * @since    1.0.0
-     */
-	public function woocommerce_variation_is_active_filter($active, $variation) {
-		if ( ! $variation->is_in_stock() ) {
-			return false;
-		}
-		return $active;
-	}
-    
-    /**
-     *
-     * @since    1.0.0
-     */
-	public function woocommerce_ajax_variation_threshold_filter() {
-		return $this->plugin->option->get('threshold') ? $this->plugin->option->get('threshold') : 30 ;
-	}
-    
-    /**
-     *
-     * @since    1.0.0
-     */
-	public function woocommerce_available_variation_filter($data, $obj, $variation) {
-		$data['stock_quantity'] = $variation->get_stock_quantity();
-		return $data;
-	}
+
+
 }

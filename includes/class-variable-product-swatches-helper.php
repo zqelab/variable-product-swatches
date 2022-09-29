@@ -96,10 +96,13 @@ class Variable_Product_Swatches_Helper {
                 'type'  => 'image'
             )
         );
+        
+        $fields = apply_filters('variable_product_swatches_attribute_meta_fields', $fields);
+
         if ( $field_id ) {
             return isset( $fields[ $field_id ] ) ? $fields [$field_id ] : array();
         }
-        return $fields;
+        return  $fields;
     }
     
     /**
@@ -118,10 +121,11 @@ class Variable_Product_Swatches_Helper {
      *
      * @since    1.0.0
      */
-    public function assigned_image($args, $default_image_attribute){
+    public function assigned_image($args, $default_image_attribute) {
         $product = $args['product'];
         $attributes = $product->get_variation_attributes();
-        $variations = $product->get_available_variations();
+        $current_attribute_key = $args['attribute'];
+
         $selected_attribute_key = array_key_first($attributes);
         if ($default_image_attribute === '__last') {
             $selected_attribute_key = array_key_last($attributes);
@@ -132,9 +136,11 @@ class Variable_Product_Swatches_Helper {
         if ($default_image_attribute === '__min') {
             $selected_attribute_key = array_search(min($this->attribute_counts($attributes)), $attribute_counts);
         }
-        $selected_attribute_name = wc_variation_attribute_name($selected_attribute_key);
-        $current_attribute_key = $args['attribute'];
         $current_attribute_name = wc_variation_attribute_name($current_attribute_key);
+        $selected_attribute_name = wc_variation_attribute_name($selected_attribute_key);
+
+
+        $variations = $product->get_available_variations();
         $assigned = array();
         foreach ($variations as $variation_key => $variation) {
             if (taxonomy_exists($args['attribute'])) {

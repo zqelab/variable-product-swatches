@@ -87,7 +87,7 @@ class Variable_Product_Swatches_Admin {
 		
 		wp_enqueue_media();
 
-		wp_enqueue_script( $this->plugin->name, plugin_dir_url( __FILE__ ) . 'js/variable-product-swatches-admin' . $suffix . '.js', array( 'jquery' ), $this->plugin->version, false );
+		wp_enqueue_script( $this->plugin->name, plugin_dir_url( __FILE__ ) . 'js/variable-product-swatches-admin' . $suffix . '.js', array( 'jquery', 'wp-color-picker' ), $this->plugin->version, false );
 		
 		wp_localize_script( $this->plugin->name, '_VPS', array(
 			'media_title' => esc_html__( 'Choose an Image', 'variable-product-swatches' ),
@@ -275,7 +275,7 @@ class Variable_Product_Swatches_Admin {
 
 		$new_links = array();
 
-		$pro_link = esc_url( 'https://zqe.io/variable-product-swatches-pro/' );
+		$pro_link = esc_url( 'https://zqe.io/variable-product-swatches/' );
 
 		if ( ! $this->plugin->helper->is_pro_active() ) {
 
