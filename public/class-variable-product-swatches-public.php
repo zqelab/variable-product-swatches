@@ -414,7 +414,7 @@ class Variable_Product_Swatches_Public {
 		$label = sprintf( '<span class="swatch-item-span-label">%1$s</span>', $option );
 
 		$html .= sprintf( 
-			'<li class="swatch-item swatch-item-%1$s swatch-item-%1$s-%2$s %3$s %4$s" title="%5$s" data-title="%5$s" data-title="%6$s" data-value="%2$s" >', 
+			'<li class="swatch-item swatch-item-%1$s swatch-item-%1$s-%2$s %3$s %4$s" title="%5$s" data-title="%5$s" data-tooltip="%6$s" data-value="%2$s" >', 
 			esc_attr( $type ), 
 			esc_attr( $option_slug ), 
 			esc_attr( $selected ? 'swatch-item-selected' : '' ), 
