@@ -16,7 +16,7 @@
  * Plugin Name:       Variable Product Swatches for WooCommerce
  * Plugin URI:        https://github.com/zqelab/variable-product-swatches
  * Description:       Variable Product Swatches is altimate solution for Color, Image, Button and Radio Swatches For WooCommerce Variable Product Attributes.
- * Version:           1.0.3
+ * Version:           1.0.4
  * Author:            ZQE
  * Author URI:        https://github.com/zqelab
  * License:           GPL-2.0+
@@ -73,7 +73,7 @@ if ( ! function_exists( 'variable_product_swatches_fs' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'VARIABLE_PRODUCT_SWATCHES_VERSION', '1.0.3' );
+define( 'VARIABLE_PRODUCT_SWATCHES_VERSION', '1.0.4' );
 define( 'VARIABLE_PRODUCT_SWATCHES_BASENAME', plugin_basename( __FILE__ ) );
 define( 'VARIABLE_PRODUCT_SWATCHES_URI', plugin_dir_url( __FILE__ ) );
 define( 'VARIABLE_PRODUCT_SWATCHES_PATH', plugin_dir_path( __FILE__ ) );
