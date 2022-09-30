@@ -1,0 +1,25 @@
+{
+    "name": "zqelab/variable-product-swatches",
+    "authors": [
+        {
+            "name": "ZQE",
+            "email": "dev@zqe.io"
+        }
+    ],
+    "require": { 
+        "zqelab/wp-settings-api": "dev-main"
+    },
+    "autoload" : {
+        "exclude-from-classmap": [
+            "includes/freemius/"
+        ],
+        "psr-4" : {
+            "Zqe\\": ["includes/", "admin/", "public/"]
+        },
+        "classmap": [
+            "includes",
+            "public",
+            "admin"
+        ]
+    }
+}
