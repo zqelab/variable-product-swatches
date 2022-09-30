@@ -23,7 +23,6 @@ var __webpack_exports__ = {};
   \****************************/
 (function($, window, document, undefined) {
     'use strict';
-console.log(_VPS.option)
     function VPSPlugin(element, options) {
         this.element = element;
         this.settings = $.extend({}, {}, options);
