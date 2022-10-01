@@ -94,6 +94,9 @@ class Variable_Product_Swatches {
 
 		$this->load_dependencies();
 		$this->set_locale();
+
+		$this->define_requirement_hooks();
+		$this->define_widget_hooks();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 	}
@@ -114,7 +117,6 @@ class Variable_Product_Swatches {
 	 * @access   private
 	 */
 	private function load_dependencies() {
-
 		$this->option = new \Zqe\Variable_Product_Swatches_Option();
 		$this->helper = new \Zqe\Variable_Product_Swatches_Helper();
 		$this->loader = new \Zqe\Variable_Product_Swatches_Loader();
@@ -130,9 +132,7 @@ class Variable_Product_Swatches {
 	 * @access   private
 	 */
 	private function set_locale() {
-
 		$plugin_i18n = new \Zqe\Variable_Product_Swatches_i18n();
-
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 	}
 
@@ -143,29 +143,45 @@ class Variable_Product_Swatches {
 	 * @since    1.0.0
 	 * @access   private
 	 */
+	private function define_requirement_hooks() {
+		$plugin_requirement = new \Zqe\Variable_Product_Swatches_Requirement( $this );
+		$this->loader->add_action( 'admin_notices', $plugin_requirement, 'php_requirement_notice' );
+		$this->loader->add_action( 'admin_notices', $plugin_requirement, 'wc_requirement_notice' );
+		$this->loader->add_action( 'admin_notices', $plugin_requirement, 'wc_version_requirement_notice' );
+	}
+
+	/**
+	 * Register all of the hooks related to the admin area functionality
+	 * of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_widget_hooks() {
+		$plugin_widget = new \Zqe\Variable_Product_Swatches_Widget( $this );
+		$this->loader->add_action( 'wp_dashboard_setup', $plugin_widget, 'dashboard_add_widgets' );
+	}
+	/**
+	 * Register all of the hooks related to the admin area functionality
+	 * of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
 	private function define_admin_hooks() {
-
 		$plugin_admin = new \Zqe\Variable_Product_Swatches_Admin( $this );
-
+		
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
-		$this->loader->add_action( 'admin_notices', $plugin_admin, 'php_requirement_notice' );
-		$this->loader->add_action( 'admin_notices', $plugin_admin, 'wc_requirement_notice' );
-		$this->loader->add_action( 'admin_notices', $plugin_admin, 'wc_version_requirement_notice' );
-
-		$this->loader->add_filter( 'plugin_row_meta', $plugin_admin, 'plugin_row_meta', 10, 2 );
-		$this->loader->add_filter( 'plugin_action_links_' . $this->get_basename(), $plugin_admin, 'plugin_action_links' );
-
-        $this->loader->add_action( 'admin_menu', $plugin_admin, 'settings_menu' );
-        $this->loader->add_action( 'admin_init', $plugin_admin, 'settings_init' );
 		$this->loader->add_filter( 'product_attributes_type_selector', $plugin_admin, 'product_attributes_type_selector_filter' );
         $this->loader->add_action( 'admin_init', $plugin_admin, 'add_attribute_meta' );
 		$this->loader->add_action( 'woocommerce_product_option_terms', $plugin_admin, 'woocommerce_product_option_terms_action', 20, 3 );
 
-		$this->loader->add_action( 'wp_dashboard_setup', $plugin_admin, 'dashboard_add_widgets' );
-
-
+        $this->loader->add_action( 'admin_menu', $plugin_admin, 'settings_menu' );
+        $this->loader->add_action( 'admin_init', $plugin_admin, 'settings_init' );
+		$this->loader->add_filter( 'plugin_row_meta', $plugin_admin, 'plugin_row_meta', 10, 2 );
+		$this->loader->add_filter( 'plugin_action_links_' . $this->get_basename(), $plugin_admin, 'plugin_action_links' );
 	}
 
 	/**
@@ -181,16 +197,12 @@ class Variable_Product_Swatches {
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
+		$this->loader->add_filter( 'body_class',  $plugin_public, 'body_class' );
+		
 		$this->loader->add_filter( 'woocommerce_variation_is_active', $plugin_public, 'woocommerce_variation_is_active_filter', 10, 2 );
 		$this->loader->add_filter( 'woocommerce_available_variation', $plugin_public, 'woocommerce_available_variation_filter', 10, 3 );
 		$this->loader->add_filter( 'woocommerce_ajax_variation_threshold', $plugin_public, 'woocommerce_ajax_variation_threshold_filter' );
-
-		$this->loader->add_filter( 'body_class',  $plugin_public, 'body_class' );
-
 		$this->loader->add_filter( 'woocommerce_dropdown_variation_attribute_options_html', $plugin_public, 'woocommerce_dropdown_variation_attribute_options_html_filter', 200, 2 );
-		
-
 	}
 
 	/**

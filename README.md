@@ -28,8 +28,8 @@ This may have bugs and lack of many features. If you want to contribute on this 
 
 == Documentation ==
 
-Getting Started with Genealogical Tree is only a matter of moments.
-Check out the detailed [documentation](https://zqe.io/docs/variable-product-swatches-documentation/) created by us to help you out to run Genealogical Tree in the best way.
+Getting Started with Variable Product Swatches for WooCommerce is only a matter of moments.
+Check out the detailed [documentation](https://zqe.io/docs/variable-product-swatches-documentation/) created by us to help you out to run Variable Product Swatches for WooCommerce in the best way.
 
 == LINKS ==
 [Demo](https://demo.zqe.io/variable-product-swatches)

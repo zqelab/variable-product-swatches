@@ -115,35 +115,6 @@ class Variable_Product_Swatches_Public {
 		wp_add_inline_style( $this->plugin->name, $css );
 
 	}
-    
-    /**
-     *
-     * @since    1.0.0
-     */
-	public function woocommerce_variation_is_active_filter($active, $variation) {
-		if ( ! $variation->is_in_stock() ) {
-			return false;
-		}
-		return $active;
-	}
-    
-    /**
-     *
-     * @since    1.0.0
-     */
-	public function woocommerce_available_variation_filter($data, $obj, $variation) {
-		$data['stock_quantity'] = $variation->get_stock_quantity();
-		return $data;
-	}
-
-   
-    /**
-     *
-     * @since    1.0.0
-     */
-	public function woocommerce_ajax_variation_threshold_filter() {
-		return $this->plugin->option->get('threshold') ? $this->plugin->option->get('threshold') : 30 ;
-	}
 
     /**
      *
@@ -174,6 +145,34 @@ class Variable_Product_Swatches_Public {
 		}
 
 		return $classes;
+	}
+    /**
+     *
+     * @since    1.0.0
+     */
+	public function woocommerce_variation_is_active_filter($active, $variation) {
+		if ( ! $variation->is_in_stock() ) {
+			return false;
+		}
+		return $active;
+	}
+    
+    /**
+     *
+     * @since    1.0.0
+     */
+	public function woocommerce_available_variation_filter($data, $obj, $variation) {
+		$data['stock_quantity'] = $variation->get_stock_quantity();
+		return $data;
+	}
+
+   
+    /**
+     *
+     * @since    1.0.0
+     */
+	public function woocommerce_ajax_variation_threshold_filter() {
+		return $this->plugin->option->get('threshold') ? $this->plugin->option->get('threshold') : 30 ;
 	}
 
     /**
@@ -251,36 +250,53 @@ class Variable_Product_Swatches_Public {
      * @since    1.0.0
      */
 	public function variation_attribute_options($args) {
-		$args = wp_parse_args(apply_filters('woocommerce_dropdown_variation_attribute_options_args', $args), array(
-			'options' => false,
-			'attribute' => false,
-			'product' => false,
-			'selected' => false,
-			'name' => '',
-			'id' => '',
-			'class' => '',
-			'show_option_none' => __('Choose an option', 'woocommerce'),
-		));
-		$type = $args['attribute_type'];
-		$options = $args['options'];
-		$product = $args['product'];
-		$attribute = $args['attribute'];
-		$name = $args['name'] ? $args['name'] : 'attribute_' . sanitize_title($attribute);
-		$id = $args['id'] ? $args['id'] : sanitize_title($attribute);
-		$class = $args['class'];
-		$show_option_none = $args['show_option_none'] ? true : false;
+		
+		$args = wp_parse_args(
+			apply_filters( 'woocommerce_dropdown_variation_attribute_options_args', $args ),
+			array(
+				'options'          => false,
+				'attribute'        => false,
+				'product'          => false,
+				'selected'         => false,
+				'name'             => '',
+				'id'               => '',
+				'class'            => '',
+				'show_option_none' => __( 'Choose an option', 'woocommerce' ),
+			)
+		);
 
-		$show_option_none_text = $args['show_option_none'] ? $args['show_option_none'] : __('Choose an option', 'woocommerce'); // We'll do our best to hide the placeholder, but we'll need to show something when resetting options. 
-		if (empty($options) && !empty($product) && !empty($attribute)) {
+		// Get selected value.
+		if ( false === $args['selected'] && $args['attribute'] && $args['product'] instanceof WC_Product ) {
+			$selected_key = 'attribute_' . sanitize_title( $args['attribute'] );
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended
+			$args['selected'] = isset( $_REQUEST[ $selected_key ] ) ? wc_clean( wp_unslash( $_REQUEST[ $selected_key ] ) ) : $args['product']->get_variation_default_attribute( $args['attribute'] );
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
+		}
+
+		$options               = $args['options'];
+		$product               = $args['product'];
+		$attribute             = $args['attribute'];
+		$name                  = $args['name'] ? $args['name'] : 'attribute_' . sanitize_title( $attribute );
+		$id                    = $args['id'] ? $args['id'] : sanitize_title( $attribute );
+		$class                 = $args['class'];
+		$show_option_none      = (bool) $args['show_option_none'];
+		$show_option_none_text = $args['show_option_none'] ? $args['show_option_none'] : __( 'Choose an option', 'woocommerce' ); // We'll do our best to hide the placeholder, but we'll need to show something when resetting options.
+
+		if ( empty( $options ) && ! empty( $product ) && ! empty( $attribute ) ) {
 			$attributes = $product->get_variation_attributes();
-			$options = $attributes[$attribute];
+			$options    = $attributes[ $attribute ];
 		}
-		if ($type === 'select') {
-			echo '<select id="' . esc_attr($id) . '" name="' . esc_attr($name) . '" data-attribute_name="attribute_' . esc_attr(sanitize_title($attribute)) . '" data-show_option_none="' . ($show_option_none ? 'yes' : 'no') . '" class="' . esc_attr($class) . '">';
-		} else {
-			echo '<select id="' . esc_attr($id) . '" name="' . esc_attr($name) . '" data-attribute_name="attribute_' . esc_attr(sanitize_title($attribute)) . '" data-show_option_none="' . ($show_option_none ? 'yes' : 'no') . '" class="' . esc_attr($class) . ' variable-product-swatches-raw-select variable-product-swatches-raw-type-' . esc_attr($type) . '" style="display:none;" >';
-		}
+
+		$attribute_type 					= $args['attribute_type'];
+
+        if ( $attribute_type !== 'select' ) {
+            $select_inline_style  = 'style="display:none"';
+            $class               .= ' variable-product-swatches-raw-select';
+        }
+
+     	echo '<select ' . $select_inline_style . ' id="' . esc_attr($id) . '" class="' . esc_attr($class) . '" name="' . esc_attr($name) . '" data-attribute_name="attribute_' . esc_attr(sanitize_title($attribute)) . '" data-show_option_none="' . ( $show_option_none ? 'yes' : 'no' ) . '">';
 		echo '<option value="">' . esc_html($show_option_none_text) . '</option>';
+
 		if (!empty($options)) {
 			if ($product && taxonomy_exists($attribute)) {
 				$terms = wc_get_product_terms($product->get_id(), $attribute, array('fields' => 'all'));
@@ -306,25 +322,25 @@ class Variable_Product_Swatches_Public {
      */
 	public function swatches_wrapper($contents, $args) {
 
-		$type = $args['attribute_type'];
+		$attribute_type = $args['attribute_type'];
 
 		$classes = array();
 
-		$classes[] = 'swatches-items-wrapper-'.$type;
+		$classes[] = 'swatches-items-wrapper-'.$attribute_type;
 
-		if( $type == 'image' ) {
+		if( $attribute_type == 'image' ) {
 			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('image_style'); // rounded // squared
 		}
 
-		if( $type == 'color' ) {
+		if( $attribute_type == 'color' ) {
 			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('color_style'); // rounded // squared 
 		}
 
-		if( $type == 'radio' ) {
+		if( $attribute_type == 'radio' ) {
 			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('radio_style'); // rounded // squared 
 		}
 
-		if( $type == 'button' ) {
+		if( $attribute_type == 'button' ) {
 			$classes[] = 'swatches-items-wrapper-'.$this->plugin->option->get('button_style'); // rounded // squared 
 		}
 
@@ -383,7 +399,7 @@ class Variable_Product_Swatches_Public {
 	public function build_swatches_item($args, $option, $option_slug, $selected, $term_id, $html = '') {
 
 
-		$type = $args['attribute_type'];
+		$attribute_type = $args['attribute_type'];
 		$product = $args['product'];
 		$attribute = $args['attribute'];
 		$assigned = isset($args['assigned']) ? $args['assigned'] : array();
@@ -415,7 +431,7 @@ class Variable_Product_Swatches_Public {
 
 		$html .= sprintf( 
 			'<li class="swatch-item swatch-item-%1$s swatch-item-%1$s-%2$s %3$s %4$s" title="%5$s" data-title="%5$s" data-tooltip="%6$s" data-value="%2$s" >', 
-			esc_attr( $type ), 
+			esc_attr( $attribute_type ), 
 			esc_attr( $option_slug ), 
 			esc_attr( $selected ? 'swatch-item-selected' : '' ), 
 			esc_attr( ( ! $is_in_stock ) ? 'swatch-item-disabled' : '' ), 
@@ -423,7 +439,7 @@ class Variable_Product_Swatches_Public {
 			$option
 		);
 		$html .= sprintf( '<div class="swatch-item-wrapper">');
-		switch ( $type ) {
+		switch ( $attribute_type ) {
 			case 'image':
 				$image_swatch_show_label = $this->plugin->option->get('image_swatch_show_label');
 
@@ -433,18 +449,18 @@ class Variable_Product_Swatches_Public {
 					$attachment_id = absint( get_term_meta( $term_id, 'product_attribute_image', true ) );
 				}
 				$image = $this->swatch_image( $attachment_id, $option );
-				$html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s">%2$s</span>%3$s', esc_attr( $type ), $image, ( $image_swatch_show_label  ? $label : '' ) );
+				$html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s">%2$s</span>%3$s', esc_attr( $attribute_type ), $image, ( $image_swatch_show_label  ? $label : '' ) );
 				break;
 			case 'color':
 				$color_swatch_show_label = $this->plugin->option->get('color_swatch_show_label');
 				$color = sanitize_hex_color(get_term_meta($term_id, 'product_attribute_color', true));
-				$html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s" style="background-color:%2$s;"></span>%3$s', esc_attr( $type ), esc_html( $color ), ( $color_swatch_show_label  ? $label : '' ) );
+				$html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s" style="background-color:%2$s;"></span>%3$s', esc_attr( $attribute_type ), esc_html( $color ), ( $color_swatch_show_label  ? $label : '' ) );
 				break;
 			case 'button':
-				$html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s">%2$s</span>', esc_attr( $type ), esc_html( $option ) );
+				$html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s">%2$s</span>', esc_attr( $attribute_type ), esc_html( $option ) );
 				break;
 			case 'radio':
-				$html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s"></span><span class="swatch-item-span-label">%2$s</span>', esc_attr( $type ), esc_html( $option ) );
+				$html .= sprintf( '<span class="swatch-item-span swatch-item-span-%1$s"></span><span class="swatch-item-span-label">%2$s</span>', esc_attr( $attribute_type ), esc_html( $option ) );
 				if( $available_variations && $stockcount && $managing_stock ) {
 					$html .= sprintf( '<span class="swatch-item-stock-count">%1$s left</span>', $variation_stock_count );
 				}
@@ -453,7 +469,7 @@ class Variable_Product_Swatches_Public {
 				break;
 		}
 		$html .= sprintf( '</div>');
-		if( $available_variations && $stockcount && $managing_stock && $type != 'radio') {
+		if( $available_variations && $stockcount && $managing_stock && $attribute_type != 'radio') {
 			$html .= sprintf( '<span class="swatch-item-stock-count">%1$s left</span>', $variation_stock_count );
 		}
 		$html .= sprintf( '</li>');

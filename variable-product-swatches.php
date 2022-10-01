@@ -113,11 +113,3 @@ function run_variable_product_swatches() {
 
 }
 add_action( 'plugins_loaded', 'run_variable_product_swatches', 25 );
-
-
-
-
-
-
-
-
