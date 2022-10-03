@@ -71,6 +71,12 @@ class Variable_Product_Swatches_Helper {
         $types['radio'] = array(
             'title'   => esc_html__('Radio', 'variable-product-swatches'),
         );
+        $types['select'] = array(
+            'title'   => esc_html__('Select', 'variable-product-swatches'),
+        );
+        $types['custom'] = array(
+            'title'   => esc_html__('Custom', 'variable-product-swatches'),
+        );
         return apply_filters('vps_available_attributes_types', $types);
 	}
     

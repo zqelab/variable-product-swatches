@@ -180,6 +180,7 @@ class Variable_Product_Swatches_Public {
      * @since    1.0.0
      */
 	public function woocommerce_dropdown_variation_attribute_options_html_filter($html, $args) {
+
 		
 		if ( apply_filters( 'default_variable_product_swatches_variation_attribute_options_html', false, $args, $html ) ) {
 			return $html;
@@ -190,59 +191,58 @@ class Variable_Product_Swatches_Public {
 			return $html;
 		}
 
+		// if $args['attribute'] exists on taxonomy and not as just custom attribute.
+		// and get custom attribute_type.
+
+		$attribute = wc_get_attribute( wc_attribute_taxonomy_id_by_name( $args['attribute'] ) );
+
+
+		$args['attribute_type'] = ( $attribute ) ? $attribute->type : 'select';
+
+		// check if product don't have custom settings for swatches
+		$individual_settings = apply_filters( 'variable_product_swatches_have_individual_settings', [], $args );
+		
+		$args['attribute_type'] = ( isset($individual_settings['type']  ) && $individual_settings['type'] ) ? $individual_settings['type'] : $args['attribute_type'];
+		
+		if ( ! in_array( $args['attribute_type'], array_keys( $this->plugin->helper->attributes_types() ) ) ) {
+			return $html;
+		}
+
+		// if attribute_type not in variable product swatches attributes_types.
+		// set that as default variable product swatches attributes_type
+		if ( $args['attribute_type'] === 'select' ) {
+			$args['attribute_type_default'] = true;
+		}
+		
 		// is image default ?
 		$image_default = $this->plugin->option->get( 'image_default' );
 		
 		// is button default ?
 		$button_default = $this->plugin->option->get( 'button_default' );
 
-		// check if product don't have custom settings for swatches
-		if ( apply_filters( 'variable_product_swatches_no_individual_settings', true, $args, $image_default, $button_default ) ) {
-
-			// Reset defult attribute_type to select.
-			$args['attribute_type'] = 'select';
-
-			// if $args['attribute'] exists on taxonomy and not as just custom attribute.
-			// and get custom attribute_type.
-			if ( taxonomy_exists( $args['attribute'] ) ) {
-				$args['attribute_type'] = wc_get_attribute( wc_attribute_taxonomy_id_by_name( $args['attribute'] ) )->type;
+		// if image is default attributes_type, selected attribute will be assigned with image
+		if (  $args['attribute_type'] === 'select' && $image_default ) {
+			$default_image_attribute =  $this->plugin->option->get( 'default_image_attribute' );
+			$assigned = $this->plugin->helper->assigned_image( $args, $default_image_attribute );
+			if ( ! empty( $assigned ) ) {
+				$args['assigned'] = $assigned;
+				$args['attribute_type'] = 'image';
 			}
+		}
 
-			// if attribute_type not in variable product swatches attributes_types.
-			// set that as default variable product swatches attributes_type
-			if ( ! in_array($args['attribute_type'], array_keys( $this->plugin->helper->attributes_types() ) ) ) {
-				$args['attribute_type_default'] = true;
-
-				// if image is default attributes_type, selected attribute will be assigned with image
-				if ( $image_default ) {
-					$default_image_attribute =  $this->plugin->option->get( 'default_image_attribute' );
-					$assigned = $this->plugin->helper->assigned_image( $args, $default_image_attribute );
-					if ( ! empty( $assigned ) ) {
-						$args['assigned'] = $assigned;
-						$args['attribute_type'] = 'image';
-					}
-				}
-
-				// if button is default attributes_type
-				if ( $button_default ) {
-					if ( ! isset( $args['assigned'] ) ) {
-						$args['attribute_type'] = 'button';
-					}
-				}
+		// if button is default attributes_type
+		if (  $args['attribute_type'] === 'select' && $button_default ) {
+			if ( ! isset( $args['assigned'] ) ) {
+				$args['attribute_type'] = 'button';
 			}
+		}
 
-			// check if $args['attribute_type'] match with variable product swatches attribute_type 
-			if ( in_array( $args['attribute_type'], array_keys( $this->plugin->helper->attributes_types() ) ) ) {
-				ob_start();
-				$this->variation_attribute_options( $args );
-				$html = ob_get_clean();
-			} else {
-				return $html;
-			}
-		} 
+		ob_start();
+		$this->variation_attribute_options( $args );
+		$this->variation_attribute_swatches( $args );
+		$html = ob_get_clean();
 
-		return apply_filters( 'variable_product_swatches_build_swatches_item_html', $html, $args, $this->plugin );
-
+		return apply_filters( 'variable_product_swatches_build_swatches_item_html', $html, $args, $this );
 	}
     
     /**
@@ -313,9 +313,16 @@ class Variable_Product_Swatches_Public {
 			}
 		}
 		echo '</select>';
-		echo $this->swatches_wrapper($this->swatches_items($args), $args);
 	}
 
+
+    /**
+     *
+     * @since    1.0.0
+     */
+	public function variation_attribute_swatches($args) {
+		echo $this->swatches_wrapper($this->swatches_items($args), $args);
+	}
     /**
      *
      * @since    1.0.0
@@ -363,29 +370,29 @@ class Variable_Product_Swatches_Public {
      */
 	public function swatches_items( $args, $saved_attribute = array(), $html = '' ) {
 
-		$options = $args['options'];
-		$product = $args['product'];
-		$attribute = $args['attribute'];
+		$options 	= $args['options'];
+		$product 	= $args['product'];
+		$attribute 	= $args['attribute'];
 
 		if (!empty($options)) {
 			if ($product && taxonomy_exists($attribute)) {
 				$terms = wc_get_product_terms($product->get_id(), $attribute, array('fields' => 'all'));
 				foreach ($terms as $term) {
 					if (in_array($term->slug, $options)) {
-						$option = esc_html(apply_filters('woocommerce_variation_option_name', $term->name, $term, $attribute, $product));
-						$selected = selected(sanitize_title($args['selected']), $term->slug, false);
-						$option_slug = $term->slug;
-						$term_id = $term->term_id;
-						$html .= $this->build_swatches_item($args, $option, $option_slug, $selected, $term_id);
+						$option 		= esc_html(apply_filters('woocommerce_variation_option_name', $term->name, $term, $attribute, $product));
+						$selected 		= selected(sanitize_title($args['selected']), $term->slug, false);
+						$option_slug 	= $term->slug;
+						$term_id 		= $term->term_id;
+						$html 		   .= $this->swatches_item($args, $option, $option_slug, $selected, $term_id);
 					}
 				}
 			} else {
 				foreach ($options as $option) {
-					$option = esc_html(apply_filters('woocommerce_variation_option_name', $option, null, $attribute, $product));
-					$selected = sanitize_title($args['selected']) === $args['selected'] ? selected($args['selected'], sanitize_title($option), false) : selected($args['selected'], $option, false);
-					$option_slug = $option;
-					$term_id = null;
-					$html .= $this->build_swatches_item($args, $option, $option_slug, $selected, $term_id);
+					$option 		= esc_html(apply_filters('woocommerce_variation_option_name', $option, null, $attribute, $product));
+					$selected 		= sanitize_title($args['selected']) === $args['selected'] ? selected($args['selected'], sanitize_title($option), false) : selected($args['selected'], $option, false);
+					$option_slug 	= $option;
+					$term_id 		= null;
+					$html 		   .= $this->swatches_item($args, $option, $option_slug, $selected, $term_id);
 				}
 			}
 		}
@@ -396,34 +403,34 @@ class Variable_Product_Swatches_Public {
      *
      * @since    1.0.0
      */
-	public function build_swatches_item($args, $option, $option_slug, $selected, $term_id, $html = '') {
+	public function swatches_item($args, $option, $option_slug, $selected, $term_id, $html = '') {
 
 
-		$attribute_type = $args['attribute_type'];
-		$product = $args['product'];
-		$attribute = $args['attribute'];
-		$assigned = isset($args['assigned']) ? $args['assigned'] : array();
-		$name = $args['name'] ? $args['name'] : 'attribute_' . sanitize_title($attribute);
+		$attribute_type 			= $args['attribute_type'];
+		$product 					= $args['product'];
+		$attribute 					= $args['attribute'];
+		$assigned 					= isset($args['assigned']) ? $args['assigned'] : array();
+		$name 						= $args['name'] ? $args['name'] : 'attribute_' . sanitize_title($attribute);
 		
-		$is_in_stock_any_variation = false;
-		$is_in_stock = false;
-		$variation_stock_count = 0;
-		$variations    = $product->get_available_variations();
-		
-		$managing_stock = $product->managing_stock();
+		$managing_stock 			= $product->managing_stock();
+		$stockcount 				= $this->plugin->option->get('stockcount');
 
-		$stockcount = $this->plugin->option->get('stockcount');
-		$get_variations = count( $product->get_children() ) <= apply_filters( 'woocommerce_ajax_variation_threshold', 30, $product );
-		$available_variations = $get_variations ? $product->get_available_variations() : array();
+		$is_in_stock_any_variation 	= false;
+		$is_in_stock 				= false;
+		$variation_stock_count 		= 0;
+		$variations    				= $product->get_available_variations();
+
+		$get_variations 			= count( $product->get_children() ) <= apply_filters( 'woocommerce_ajax_variation_threshold', 30, $product );
+		$available_variations 		= $get_variations ? $product->get_available_variations() : array();
 
 		foreach ($variations as $variation) {
 			if ($variation['is_in_stock']) {
-				$is_in_stock_any_variation = true;
+				$is_in_stock_any_variation 	= true;
 			}
 			if (($variation['attributes'][$name] == $option_slug && $variation['is_in_stock']) || (!$variation['attributes'][$name] && $is_in_stock_any_variation)) {
-				$variationObj = wc_get_product($variation['variation_id']);
-				$variation_stock_count += $variationObj->get_stock_quantity();
-				$is_in_stock = true;
+				$variationObj 				= wc_get_product($variation['variation_id']);
+				$variation_stock_count 	   += $variationObj->get_stock_quantity();
+				$is_in_stock 				= true;
 			}
 		}
 
@@ -474,7 +481,7 @@ class Variable_Product_Swatches_Public {
 		}
 		$html .= sprintf( '</li>');
 
-		return $html;
+		return apply_filters('variable_product_swatches_build_swatches_items_html', $html, $args, $option, $option_slug, $selected, $term_id ) ;
 	}
     
     /**
@@ -482,16 +489,22 @@ class Variable_Product_Swatches_Public {
      * @since    1.0.0
      */
 	public function swatch_image($attachment_id, $option) {
+		
 		$swatch_image_size = $this->plugin->option->get('image_swatch_size');
-      
-
+		
 		$image = wp_get_attachment_image_src($attachment_id, $swatch_image_size);
 		
 		if( ! $image ) {
-			$image = array( wc_placeholder_img_src(), '', '' );
+			$image = array( wc_placeholder_img_src(), '150', '150' );
 		}
 
-		return  sprintf('<img class="swatch-item-image" alt="%1$s" src="%2$s" width="%3$s" height="%4$s" />', esc_attr($option), esc_url($image[0]),esc_attr($image[1]),esc_attr($image[2]));
+		return  sprintf(
+			'<img class="swatch-item-image" alt="%1$s" src="%2$s" width="%3$s" height="%4$s" />', 
+			esc_attr($option), 
+			esc_url($image[0]),
+			esc_attr($image[1]),
+			esc_attr($image[2])
+		);
 	}
 
 

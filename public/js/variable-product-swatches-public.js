@@ -130,29 +130,13 @@ var __webpack_exports__ = {};
             })
         },
         tooltip: function() {
-            
-            if( _VPS.option.advanced.tooltip !== 'on' ){
-                return false;
-            }
-
             this.$element.on('woocommerce_variation_has_changed.variable-product-swatches', function(event) {
                 $(this).find('li.swatch-item').each(function(index, el) {
-
-                    var placement = _VPS.option.advanced.tooltip_placement ? _VPS.option.advanced.tooltip_placement : 'top';
-                    var tooltip = $(this).data('tooltip');
                     $(this).mouseover(function() {
-                        if($(this).hasClass('swatch-item-radio')){
-                            if ($(this).find('.swatch-item-span-radio').find('.swatch-item-tooltip').length === 0) {
-                                $(this).find('.swatch-item-span-radio').append('<div class="swatch-item-tooltip swatch-item-tooltip-' + placement + '">' + tooltip + '</div>');
-                            }  
-                        } else {
-                            if ($(this).find('.swatch-item-tooltip').length === 0) {
-                                $(this).append('<div class="swatch-item-tooltip swatch-item-tooltip-' + placement + '">' + tooltip + '</div>');
-                            }
-                        }
+                        $(this).find('.swatch-item-tooltip').show(); 
                     })
                     $(this).mouseleave(function() {
-                       $(this).find('.swatch-item-tooltip').remove();
+                       $(this).find('.swatch-item-tooltip').hide();
                     })
                 })
             })
