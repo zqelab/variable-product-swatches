@@ -67,6 +67,15 @@ body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item .sw
   width: -moz-max-content;
   width: max-content;
 }
+body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item .swatch-item-tooltip.swatch-item-tooltip-image {
+  padding: 0;
+  background: #fff;
+  border-radius: 4px;
+  border: 1px solid #000;
+}
+body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item .swatch-item-tooltip.swatch-item-tooltip-image img {
+  border-radius: 4px;
+}
 body.variable-product-swatches-body ul.swatches-items-wrapper li.swatch-item .swatch-item-tooltip:before {
   content: "";
   position: absolute;
