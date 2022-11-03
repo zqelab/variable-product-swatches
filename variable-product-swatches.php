@@ -106,10 +106,7 @@ register_deactivation_hook( __FILE__, 'deactivate_variable_product_swatches' );
  *
  * @since    1.0.0
  */
-function run_variable_product_swatches() {
-
-	$plugin = new \Zqe\Variable_Product_Swatches();
-	$plugin->run();
-
-}
-add_action( 'plugins_loaded', 'run_variable_product_swatches', 25 );
+add_action( 'plugins_loaded', function () {
+    $plugin = new \Zqe\Variable_Product_Swatches();
+    $plugin->run();
+}, 15 );

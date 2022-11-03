@@ -178,6 +178,11 @@ class Variable_Product_Swatches {
         $this->loader->add_action( 'admin_init', $plugin_admin, 'add_attribute_meta' );
 		$this->loader->add_action( 'woocommerce_product_option_terms', $plugin_admin, 'woocommerce_product_option_terms_action', 20, 3 );
 
+		$this->loader->add_action( 'zqe_manage_edit_taxonomy_columns', $plugin_admin, 'zqe_manage_edit_taxonomy_columns_filter', 10, 1 );
+		$this->loader->add_action( 'zqe_manage_taxonomy_custom_column', $plugin_admin, 'zqe_manage_taxonomy_custom_column_filter', 10, 3 );
+
+
+
         $this->loader->add_action( 'admin_menu', $plugin_admin, 'settings_menu' );
         $this->loader->add_action( 'admin_init', $plugin_admin, 'settings_init' );
 		$this->loader->add_filter( 'plugin_row_meta', $plugin_admin, 'plugin_row_meta', 10, 2 );
@@ -233,6 +238,26 @@ class Variable_Product_Swatches {
 	 */
 	public function get_loader() {
 		return $this->loader;
+	}
+
+	/**
+	 * The reference to the class that orchestrates the hooks with the plugin.
+	 *
+	 * @since     1.0.0
+	 * @return    Variable_Product_Swatches_Helper    Orchestrates the hooks of the plugin.
+	 */
+	public function get_helper() {
+		return $this->helper;
+	}
+
+	/**
+	 * The reference to the class that orchestrates the hooks with the plugin.
+	 *
+	 * @since     1.0.0
+	 * @return    Variable_Product_Swatches_Option   Orchestrates the hooks of the plugin.
+	 */
+	public function get_option() {
+		return $this->option;
 	}
 
 	/**

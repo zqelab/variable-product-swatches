@@ -115,13 +115,15 @@ class Variable_Product_Swatches_Admin {
 	}
     
 
-    /**
-     * Attribute type selector on product attribute add / edit page.
-     * 
-     * @since    1.0.0
-     */
+	/**
+	 * Function for `product_attributes_type_selector` filter-hook.
+	 * 
+	 * @param  $array 
+	 *
+	 * @return 
+	 */
 	public function product_attributes_type_selector_filter( $selector ) {
-		foreach ( $this->plugin->helper->attributes_types() as $key => $options ) {
+		foreach ( $this->plugin->helper->attribute_types() as $key => $options ) {
 			$selector[ $key ] = $options['title'];
 		}
 		return $selector;
@@ -134,30 +136,34 @@ class Variable_Product_Swatches_Admin {
      */
 	public function add_attribute_meta() {  
 		
-		$fields  				= $this->plugin->helper->attribute_meta_fields();
+		$fields  				= $this->plugin->get_helper()->attribute_meta_fields();
 		$attribute_type_keys 	= array_keys($fields);
 		$attributes 			= function_exists('wc_get_attribute_taxonomies') ? wc_get_attribute_taxonomies() : array();
 		
 		if ( $attributes && is_array( $attributes ) ) {
 			foreach ( $attributes as $key => $attribute ) {
 				if (in_array($attribute->attribute_type, $attribute_type_keys)) {
-					new \Zqe\Variable_Product_Swatches_Attribute_Meta( wc_attribute_taxonomy_name( $attribute->attribute_name ),  $fields[$attribute->attribute_type]);
+					new \Zqe\Wp_Term_Meta( wc_attribute_taxonomy_name( $attribute->attribute_name ), 'product', $fields[$attribute->attribute_type]);
 				}
 			}
 		}
 	}
     
-    /**
-     * Add custom type to attributes section on product edit page.
-     * 
-     * @since    1.0.0
-     */
+	/**
+	 * Function for `woocommerce_product_option_terms` action-hook.
+	 * 
+	 * @param  $attribute_taxonomy 
+	 * @param  $i
+	 * @param  $attribute
+	 *
+	 * @return void
+	 */
 	public function woocommerce_product_option_terms_action( $attribute_taxonomy, $i, $attribute ) {
-		if ( in_array( $attribute_taxonomy->attribute_type, array_keys( $this->plugin->helper->attributes_types() ) ) ) {
+		if ( 'select' !== $attribute_taxonomy->attribute_type && in_array( $attribute_taxonomy->attribute_type, array_keys( $this->plugin->get_helper()->attribute_types() ) ) ) {
 			?>
-			<select multiple="multiple" data-placeholder="<?php esc_attr_e( 'Select terms', 'variable-product-swatches' ); ?>" class="multiselect attribute_values wc-enhanced-select" name="attribute_values[<?php echo esc_attr( $i ); ?>][]">
+			<select multiple="multiple" data-placeholder="<?php esc_attr_e( 'Select terms', 'woocommerce' ); ?>" class="multiselect attribute_values wc-enhanced-select" name="attribute_values[<?php echo esc_attr( $i ); ?>][]">
 				<?php
-				$args = array(
+				$args      = array(
 					'orderby'    => ! empty( $attribute_taxonomy->attribute_orderby ) ? $attribute_taxonomy->attribute_orderby : 'name',
 					'hide_empty' => 0,
 				);
@@ -171,17 +177,67 @@ class Variable_Product_Swatches_Admin {
 				}
 				?>
 			</select>
-			<button class="button plus select_all_attributes">
-				<?php esc_html_e( 'Select all', 'variable-product-swatches' ); ?>
-			</button>
-			<button class="button minus select_no_attributes">
-				<?php esc_html_e( 'Select none', 'variable-product-swatches' ); ?>
-			</button>
-			<button class="button fr plus add_new_attribute">
-				<?php esc_html_e( 'Add new', 'woocommerce' ); ?>
-			</button>
+			<button class="button plus select_all_attributes"><?php esc_html_e( 'Select all', 'woocommerce' ); ?></button>
+			<button class="button minus select_no_attributes"><?php esc_html_e( 'Select none', 'woocommerce' ); ?></button>
+			<button class="button fr plus add_new_attribute"><?php esc_html_e( 'Add new', 'woocommerce' ); ?></button>
 			<?php
 		}
+	}
+	
+	/**
+	 * @since    1.0.0
+	 */
+	public function zqe_manage_edit_taxonomy_columns_filter( $columns ) {
+		
+		$new = array();
+		
+		if ( isset( $columns[ 'cb' ] ) ) {
+			$new[ 'cb' ] = $columns[ 'cb' ];
+		}
+		
+		$new[ 'variable-product-swatches-meta' ] = esc_html__( 'Preview', 'variation-swatches-and-gallery' );
+		
+		if ( isset( $columns[ 'cb' ] ) ) {
+			unset( $columns[ 'cb' ] );
+		}
+
+		return array_merge( $new, $columns );
+	}
+
+	/**
+	 * @since    1.0.0
+	 */
+	public function zqe_manage_taxonomy_custom_column_filter( $columns, $column, $term_id ) {
+		
+		if ( 'variable-product-swatches-meta' !== $column ) {
+			return $columns;
+		}
+
+		$term = get_term( $term_id );
+
+        $attribute = wc_get_attribute( wc_attribute_taxonomy_id_by_name( $term->taxonomy ) );
+
+        if( $attribute->type == 'color' ){
+            $value = sanitize_hex_color( get_term_meta( $term_id, 'product_attribute_color', true ) );
+            printf('<div class="variable-product-swatches-meta-preview" style="background-color:%s;"></div>', 
+                esc_attr( $value ) 
+            );
+        }
+        
+        if( $attribute->type =='image' ){
+            $attachment_id = absint( get_term_meta( $term_id,  'product_attribute_image', true ) );
+            $image         = wp_get_attachment_image_src( $attachment_id, 'thumbnail' );
+            if ( is_array( $image ) ) {
+                printf( 
+                    '<img src="%s" alt="" width="%d" height="%d" class="variable-product-swatches-meta-preview" />', 
+                    esc_url( $image[0] ), 
+                    $image[1], 
+                    $image[2] 
+                );
+            }
+        }
+
+		return $columns;
 	}
 
     /**

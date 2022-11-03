@@ -57,7 +57,7 @@ class Variable_Product_Swatches_Helper {
      *
      * @since    1.0.0
      */
-	public static function attributes_types() {
+	public static function attribute_types() {
         $types = array();
         $types['color'] = array(
             'title'   => esc_html__('Color', 'variable-product-swatches'),
@@ -77,14 +77,14 @@ class Variable_Product_Swatches_Helper {
         $types['custom'] = array(
             'title'   => esc_html__('Custom', 'variable-product-swatches'),
         );
-        return apply_filters('vps_available_attributes_types', $types);
+        return apply_filters('vps_available_attribute_types', $types);
 	}
     
     /**
      *
      * @since    1.0.0
      */
-    public function attribute_meta_fields($field_id = false) {
+    public function attribute_meta_fields( $field_id = false ) {
         $fields = array();
         $fields['color'] = array(
             array(
