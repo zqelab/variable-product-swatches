@@ -74,7 +74,7 @@ class Variable_Product_Swatches_Widget {
 	    
 	    $feeds = array(
 	        array(
-	            'url'          => 'https://www.zqe.io/feed/',
+	            'url'          => 'https:/zqe.io/feed/',
 	            'items'        => $options['items'],
 	            'show_summary' => 1,
 	            'show_author'  => 0,
